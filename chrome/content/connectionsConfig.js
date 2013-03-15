@@ -316,7 +316,7 @@ ConnectionsToolbar.config = {
                     var titleElement = entry.getElementsByTagName("title")[0];
                     var title = titleElement.firstChild.nodeValue;
                     if(ConnectionsToolbar.config.contains(title)) {
-                        window.alert(title);
+                        // window.alert(title);
                         var URLElement = entry.getElementsByTagName("link")[0];
                         var URL = URLElement.getAttribute("href");
                         // window.alert(URL);
