@@ -36,15 +36,12 @@ ConnectionsToolbar.config = {
                 "Resetting URLs");
         for (name in ConnectionsToolbar.constants.ALL_COMPONENTS) {
             component = ConnectionsToolbar.constants.ALL_COMPONENTS[name];
-            Application.prefs
-                    .get("extensions.connections-toolbar." + component + ".url").value = "";
-            Application.prefs
-                .get("extensions.connections-toolbar." + component + ".enable").value = false;
+            Application.prefs.setValue("extensions.connections-toolbar." + component + ".url", "");
+            Application.prefs.setValue("extensions.connections-toolbar." + component + ".enable", false);
         }
         ConnectionsToolbar.config.autoConfigAttempted = false;
         ConnectionsToolbar.config.version = null;
-        var configURL = ConnectionsToolbar.preferences.searchURL
-                + "/serviceconfigs";
+        var configURL = ConnectionsToolbar.preferences.searchURL + "/serviceconfigs";
         ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
                 "Performing Connections autoconfiguration: " + configURL);
         var xhReq = new XMLHttpRequest();
@@ -319,7 +316,7 @@ ConnectionsToolbar.config = {
                     var titleElement = entry.getElementsByTagName("title")[0];
                     var title = titleElement.firstChild.nodeValue;
                     if(ConnectionsToolbar.config.contains(title)) {
-                        // window.alert(title);
+                        window.alert(title);
                         var URLElement = entry.getElementsByTagName("link")[0];
                         var URL = URLElement.getAttribute("href");
                         // window.alert(URL);

@@ -56,3 +56,4 @@ pref("extensions.connections-toolbar.hot.url",                                  
 pref("extensions.connections-toolbar.profiles.url",                              "");
 pref("extensions.connections-toolbar.search.url",                                "https://greenhouse.lotus.com/search");
 pref("extensions.connections-toolbar.wikis.url",                                 "");
+pref("extensions.connections-toolbar.bookmarklet.url",                           "");
