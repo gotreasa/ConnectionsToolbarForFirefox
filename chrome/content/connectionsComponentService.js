@@ -175,11 +175,9 @@ ConnectionsToolbar.componentService = {
         var title = encodeURIComponent(window.content.document.title);
         if (title != "" && location != "about:blank") {
             var bookmarkURL;
-            if(Application.prefs
-                    .get("extensions.connections-toolbar.search.url")
-                    .value.indexOf("greenhouse.lotus.com/search") != -1) {
-                bookmarkURL = "https://greenhouse.lotus.com/connections/bookmarklet/post?url="
-                        + location + "&title=" + title;
+            if(ConnectionsToolbar.config.version >= "4.0") {
+                bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("bookmarklet")
+                        + "/post?url=" + location + "&title=" + title;
             } else {
                 bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("dogear")
                         + "/bookmarklet/post?url=" + location + "&title=" + title;

@@ -37,7 +37,8 @@ ConnectionsToolbar.constants = {
         "DOGEAR" : "dogear",
         "FILES" : "files",
         "FORUMS" : "forums",
-        "WIKIS" : "wikis"
+        "WIKIS" : "wikis",
+        "BOOKMARKLET" : "bookmarklet"
     },
     SEARCH : "search",
     RECOMMENDATIONS : "recommendations",
