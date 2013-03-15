@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+ * © Copyright IBM Corp. 2011, 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ -->
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM
+    "chrome://connections-toolbar/locale/loginAlert.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="loginAlert" title="&connections.alert.bad.credentials;" height="115px" width="560px"
+    onload="ConnectionsPreferences.preferenceSettings.init();"
+    buttons="accept,cancel"
+    ondialogaccept="return ConnectionsToolbar.preferences.configure(event, window.opener, true);"
+    ondialogcancel="return;">
+
+    <script src="chrome://connections-toolbar/content/connectionsPreferences.js"/>
+    <script src="chrome://connections-toolbar/content/connectionsPreferencesDialog.js"/>
+
+    <grid>
+        <columns>
+            <column/>
+            <column flex="1"/>
+        </columns>
+        <rows>
+            <row>
+                <hbox align="start">
+                    <image src="chrome://connections-toolbar/skin/images/184-warning.png" width="24px" heigh="24px"/>
+                </hbox>
+                <vbox pack="center">
+                    <description id="info.body" context="contentAreaContextMenu" noinitialfocus="true">&connections.login.bad.credentials;</description>
+                </vbox>
+            </row>
+        </rows>
+    </grid>
+</dialog>

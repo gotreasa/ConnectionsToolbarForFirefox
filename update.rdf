@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+ * © Copyright IBM Corp. 2011, 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ -->
+<r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.mozilla.org/2004/em-rdf#">
+
+    <r:Description
+        about="urn:mozilla:extension:ibm-connections-toolbar@ie.ibm.com">
+        <updates>
+            <r:Seq>
+                <r:li>
+                    <r:Description>
+                        <version>3.0.1</version>
+                        <targetApplication>
+                            <r:Description>
+                                <id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+                                </id>
+                                <minVersion>10.0</minVersion>
+                                <maxVersion>17.*</maxVersion>
+                                <updateLink>https://www.ibm.com/developerworks/mydeveloperworks/files/form/anonymous/api/library/76dda219-d60f-4b99-b7b0-feb0918a6501/document/baa8ca64-e0b9-4d5f-9eb3-e8cb864d54f5/media/connections-toolbar3.0.xpi
+                                </updateLink>
+                                <updateHash>
+                                    sha256:4d7b149fa5c4044e10b78c7c8685e3148452e5078efbc0f3d6dabae9469597fa
+                                </updateHash>
+                            </r:Description>
+                        </targetApplication>
+                    </r:Description>
+                </r:li>
+            </r:Seq>
+        </updates>
+    </r:Description>
+
+</r:RDF>

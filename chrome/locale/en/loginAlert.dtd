@@ -1,0 +1,2 @@
+<!ENTITY connections.login.bad.credentials                      "Unable to log into IBM Connections.  Configure the username/password for the IBM Connections toolbar now?">
+<!ENTITY connections.alert.bad.credentials                      "Incorrect Credentials">
