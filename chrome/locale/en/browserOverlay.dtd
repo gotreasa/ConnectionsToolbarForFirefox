@@ -1,0 +1,89 @@
+<!ENTITY connections.recommendations.label                      "Recommendations">
+<!ENTITY connections.content.label                              "My Content">
+
+<!ENTITY connections.toolbarName.label                          "IBM Connections Toolbar">
+<!ENTITY connections.toolbar.accesskey                          "I">
+<!ENTITY connections.toolbar.configure                          "Configure">
+<!ENTITY connections.toolbar.configure.accesskey                "C">
+<!ENTITY connections.toolbar.reload                             "Refresh">
+<!ENTITY connections.toolbar.reload.accesskey                   "R">
+<!ENTITY connections.toolbar.buttons.restore                    "Restore the toolbar buttons">
+<!ENTITY connections.toolbar.buttons.restore.accesskey          "B">
+<!ENTITY connections.toolbar.enableLogging                      "Toggle logging on restart">
+<!ENTITY connections.toolbar.enableLogging.accesskey            "T">
+<!ENTITY connections.toolbar.help                               "Help">
+<!ENTITY connections.toolbar.help.accesskey                     "H">
+
+<!ENTITY connections.allConnections.title                       "All Connections">
+<!ENTITY connections.hot.title                                  "Hot Button">
+<!ENTITY connections.homepage.title                             "Home">
+<!ENTITY connections.activities.title                           "Activities">
+<!ENTITY connections.blogs.title                                "Blogs">
+<!ENTITY connections.dogear.title                               "Bookmarks">
+<!ENTITY connections.communities.title                          "Communities">
+<!ENTITY connections.files.title                                "Files">
+<!ENTITY connections.forums.title                               "Forums">
+<!ENTITY connections.profiles.title                             "Profiles">
+<!ENTITY connections.wikis.title                                "Wikis">
+<!ENTITY connections.status_updates.title                       "Status Updates">
+<!ENTITY connections.search.title                               "Search">
+<!ENTITY connections.advancedSearch.title                       "Advanced Search">
+<!ENTITY connections.settings.title                             "Settings">
+<!ENTITY connections.searchBox.emptyText                        "Search Connections">
+
+<!ENTITY connections.dialog.server.description                  "Please enter the path to the Search application on your IBM Connections server.  You can also specify any URL as a 'Hot' button which you can access at any time from the IBM Connections Toolbar.">
+<!ENTITY connections.dialog.components.description              "Specify the number of content items and recommendations you wish to see for each component.  Recommendations will only work with IBM Connections 3.0 or later.">
+
+<!ENTITY connections.dialog.urls                                "URLs">
+<!ENTITY connections.dialog.search.url.title                    "Search URL: ">
+<!ENTITY connections.dialog.search.url.error                    "Please enter a search url in the form of https://&lt;hostname&gt;/search">
+<!ENTITY connections.dialog.hot.url.title                       "Hot URL: ">
+
+<!ENTITY connections.dialog.credentials                         "Credentials">
+<!ENTITY connections.dialog.access.username                     "User: ">
+<!ENTITY connections.dialog.access.password                     "Password: ">
+
+<!ENTITY connections.dialog.title                               "Configure IBM Connections toolbar">
+<!ENTITY connections.dialog.settings.server.title               "Connections Settings">
+<!ENTITY connections.dialog.settings.components.title           "Component Settings">
+<!ENTITY connections.dialog.component.heading                   "Component">
+<!ENTITY connections.dialog.url.heading                         "URL">
+<!ENTITY connections.dialog.filter.heading                      "Filter">
+<!ENTITY connections.dialog.close                               "Close">
+
+<!ENTITY connections.dialog.scheduler.description               "Configure how often the toolbar is updated">
+<!ENTITY connections.dialog.settings.scheduler.title            "Scheduler Settings">
+<!ENTITY connections.dialog.scheduler.frequency                 "Run every:">
+<!ENTITY connections.dialog.scheduler.hour                      "at:">
+<!ENTITY connections.dialog.scheduler                           "Scheduler">
+
+<!ENTITY connections.dialog.blogs.homepage.handle               "Handle for the Blogs homepage:">
+<!ENTITY connections.dialog.blogs                               "Blogs Homepage">
+
+<!ENTITY connections.recommendations.bycomponent                "By Component">
+<!ENTITY connections.recommendations.norecommendations          "No Recommendations">
+
+<!ENTITY connections.activities.nocontent                       "No Activities">
+<!ENTITY connections.blogs.nocontent                            "No Blogs">
+<!ENTITY connections.dogear.nocontent                           "No Bookmarks">
+<!ENTITY connections.communities.nocontent                      "No Communities">
+<!ENTITY connections.files.nocontent                            "No Files">
+<!ENTITY connections.forums.nocontent                           "No Forums">
+<!ENTITY connections.wikis.nocontent                            "No Wikis">
+
+<!ENTITY connections.activities.new                             "Start an Activity">
+<!ENTITY connections.blogs.new                                  "New blog entry">
+<!ENTITY connections.dogear.bookmarkthis                        "Bookmark this page">
+<!ENTITY connections.communities.new                            "Start a Community">
+<!ENTITY connections.files.upload                               "Upload a File">
+<!ENTITY connections.forums.new                                 "Start a Forum">
+<!ENTITY connections.wikis.new                                  "Start a Wiki">
+
+<!ENTITY connections.menu.open                                  "Open">
+<!ENTITY connections.menu.open.accesskey                        "O">
+<!ENTITY connections.menu.open.tab                              "Open in a new Tab">
+<!ENTITY connections.menu.open.tab.accesskey                    "T">
+<!ENTITY connections.menu.files.donwnload                       "Download the file">
+<!ENTITY connections.menu.files.donwnload.accesskey             "D">
+<!ENTITY connections.menu.copy.url                              "Copy the URL">
+<!ENTITY connections.menu.copy.url.accesskey                    "C">

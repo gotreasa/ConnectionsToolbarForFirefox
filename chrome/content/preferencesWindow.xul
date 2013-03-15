@@ -1,0 +1,578 @@
+<?xml version="1.0"?>
+<!--
+ * © Copyright IBM Corp. 2011, 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ -->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet type="text/css"
+  href="chrome://connections-toolbar/skin/connectionsToolbar.css" ?>
+
+<!DOCTYPE overlay SYSTEM "chrome://connections-toolbar/locale/browserOverlay.dtd">
+
+<prefwindow class="connections-pref-window" id="connections-preferences"
+    title="&connections.dialog.title;"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    onload="ConnectionsPreferences.preferenceSettings.init();"
+    ondialogaccept="return false;"
+    buttons="extra1,extra2" buttonlabelextra1="&connections.dialog.close;"
+    defaultButton="extra1"
+    ondialogextra1="ConnectionsPreferences.preferenceSettings.validateOnClose();ConnectionsPreferences.preferenceSettings.submit();"
+    buttonlabelextra2="&connections.toolbar.help;" ondialogextra2="ConnectionsToolbar.browserOverlay.goHelp();">
+
+    <script type="application/x-javascript"
+        src="chrome://connections-toolbar/content/connectionsPreferencesDialog.js" />
+
+    <prefpane id="server-settings-pane" label="&connections.dialog.settings.server.title;"
+        image="chrome://connections-toolbar/skin/images/55-network.png"
+        onpaneload="ConnectionsPreferences.preferenceSettings.populateLoginForm();">
+        <preferences>
+            <preference instantApply="true" id="search-url-pref"
+                name="extensions.connections-toolbar.search.url" type="string" />
+            <preference instantApply="true" id="hot-url-pref"
+                name="extensions.connections-toolbar.hot.url" type="string" />
+            <preference instantApply="true" id="blogs-homepage-pref"
+                name="extensions.connections-toolbar.blogs.homepage" type="string" />
+        </preferences>
+
+        <separator />
+        <description class="header connections-pref-description">&connections.dialog.server.description;
+        </description>
+        <separator />
+        <groupbox>
+        <caption label="&connections.dialog.urls;"/>
+            <grid>
+                <columns>
+                    <column />
+                    <column flex="1" />
+                </columns>
+                <rows>
+                    <row align="center">
+                        <label control="search-url"
+                            value="&connections.dialog.search.url.title;" />
+                        <textbox id="search-url" preference="search-url-pref"
+                            onchange="ConnectionsPreferences.preferenceSettings.validateURL();" />
+                    </row>
+                    <row align="center">
+                        <label style="display:none" id="search-url-spacer" />
+                        <label class="label connections-pref-error"
+                            style="display:none" id="search-url-error">&connections.dialog.search.url.error;
+                        </label>
+                    </row>
+                    <row align="center">
+                        <label control="hot-url"
+                            value="&connections.dialog.hot.url.title;" />
+                        <textbox id="hot-url" preference="hot-url-pref" />
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <separator flex="1" />
+        <groupbox>
+        <caption label="&connections.dialog.credentials;"/>
+            <grid>
+                <columns>
+                    <column />
+                    <column flex="1" />
+                </columns>
+                <rows>
+                    <row align="center">
+                        <label control="j_username"
+                            value="&connections.dialog.access.username;" />
+                        <textbox id="j_username" />
+                    </row>
+                    <row align="center">
+                        <label control="j_password"
+                            value="&connections.dialog.access.password;" />
+                        <textbox type="password" id="j_password" />
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <groupbox>
+        <caption label="&connections.dialog.blogs;"/>
+            <hbox align="center">
+                <label control="blogs-hamepage"
+                    value="&connections.dialog.blogs.homepage.handle;" />
+                <textbox id="blogs-hamepage" preference="blogs-homepage-pref"/>
+            </hbox>
+        </groupbox>
+        <separator height="90px" />
+    </prefpane>
+
+    <prefpane id="component-settings-pane"
+        label="&connections.dialog.settings.components.title;"
+        image="chrome://connections-toolbar/skin/images/106-sliders.png">
+        <preferences>
+            <preference instantApply="true"
+                id="activities-content-count-pref" name="extensions.connections-toolbar.content.activities.count"
+                type="int" />
+            <preference instantApply="true"
+                id="blogs-content-count-pref" name="extensions.connections-toolbar.content.blogs.count"
+                type="int" />
+            <preference instantApply="true"
+                id="dogear-content-count-pref" name="extensions.connections-toolbar.content.dogear.count"
+                type="int" />
+            <preference instantApply="true"
+                id="communities-content-count-pref" name="extensions.connections-toolbar.content.communities.count"
+                type="int" />
+            <preference instantApply="true"
+                id="files-content-count-pref" name="extensions.connections-toolbar.content.files.count"
+                type="int" />
+            <preference instantApply="true"
+                id="forums-content-count-pref" name="extensions.connections-toolbar.content.forums.count"
+                type="int" />
+            <preference instantApply="true"
+                id="wikis-content-count-pref" name="extensions.connections-toolbar.content.wikis.count"
+                type="int" />
+
+            <preference instantApply="true"
+                id="allConnections-recommendations-count-pref"
+                name="extensions.connections-toolbar.recommendations.allConnections.count"
+                type="int" />
+            <preference instantApply="true"
+                id="activities-recommendations-count-pref"
+                name="extensions.connections-toolbar.recommendations.activities.count"
+                type="int" />
+            <preference instantApply="true"
+                id="blogs-recommendations-count-pref" name="extensions.connections-toolbar.recommendations.blogs.count"
+                type="int" />
+            <preference instantApply="true"
+                id="dogear-recommendations-count-pref"
+                name="extensions.connections-toolbar.recommendations.dogear.count"
+                type="int" />
+            <preference instantApply="true"
+                id="communities-recommendations-count-pref"
+                name="extensions.connections-toolbar.recommendations.communities.count"
+                type="int" />
+            <preference instantApply="true"
+                id="files-recommendations-count-pref" name="extensions.connections-toolbar.recommendations.files.count"
+                type="int" />
+            <preference instantApply="true"
+                id="forums-recommendations-count-pref"
+                name="extensions.connections-toolbar.recommendations.forums.count"
+                type="int" />
+            <preference instantApply="true"
+                id="wikis-recommendations-count-pref" name="extensions.connections-toolbar.recommendations.wikis.count"
+                type="int" />
+        </preferences>
+
+        <separator />
+        <description class="header connections-pref-description">&connections.dialog.components.description;
+        </description>
+        <separator />
+        <groupbox>
+            <grid>
+                <columns>
+                    <column flex="1" />
+                    <column flex="3" />
+                    <column flex="2" />
+                    <column flex="3" />
+                    <column flex="2" />
+                </columns>
+                <rows>
+                    <row align="center">
+                        <separator />
+                        <separator />
+                        <hbox pack="center"
+                            class="connections-component-config-header">
+                            <label control="allConnections-count"
+                                value="&connections.content.label;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center"
+                            class="connections-component-config-header">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/28-star.png" />
+                            <label control="allConnections-count"
+                                value="&connections.recommendations.label;" />
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconConnections16.png" />
+                            <label control="allConnections-count"
+                                value="&connections.allConnections.title;" />
+                        </hbox>
+                        <separator />
+                        <separator />
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist
+                                preference="allConnections-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconCommunities16.png" />
+                            <label control="communities-count"
+                                value="&connections.communities.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="communities-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist
+                                preference="communities-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconActivities16.png" />
+                            <label control="activities-count"
+                                value="&connections.activities.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="activities-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist
+                                preference="activities-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconBlogs16.png" />
+                            <label control="blogs-count"
+                                value="&connections.blogs.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="blogs-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="blogs-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconBookmarks16.png" />
+                            <label control="dogear-count"
+                                value="&connections.dogear.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="dogear-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="dogear-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconFiles16.png" />
+                            <label control="files-count"
+                                value="&connections.files.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="files-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="files-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconForums16.png" />
+                            <label control="forums-count"
+                                value="&connections.forums.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="forums-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="forums-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                    <row align="center">
+                        <hbox class="connections-component-config-row">
+                            <image class="connections-component-config-image"
+                                field="image"
+                                src="chrome://connections-toolbar/skin/images/iconWikis16.png" />
+                            <label control="wikis-count"
+                                value="&connections.wikis.title;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="wikis-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="wikis-recommendations-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="5" value="5" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="15" value="15" />
+                                    <menuitem label="20" value="20" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <separator />
+    </prefpane>
+
+    <prefpane id="scheduler-settings-pane" label="&connections.dialog.settings.scheduler.title;"
+        onpaneload="ConnectionsPreferences.preferenceSettings.updateScheduler();"
+        image="chrome://connections-toolbar/skin/images/83-calendar.png">
+        <preferences>
+            <preference instantApply="true" id="scheduler-frequency-pref"
+                name="extensions.connections-toolbar.scheduler.frequency" type="int" />
+            <preference instantApply="true" id="scheduler-hour-pref"
+                name="extensions.connections-toolbar.scheduler.hour" type="int" />
+            <preference instantApply="true" id="scheduler-second-pref"
+                name="extensions.connections-toolbar.scheduler.minute" type="int" />
+            <preference instantApply="true" id="scheduler-second-pref"
+                name="extensions.connections-toolbar.scheduler.second" type="int" />
+        </preferences>
+
+        <separator />
+        <description class="header connections-pref-description">&connections.dialog.scheduler.description;
+        </description>
+        <separator />
+        <groupbox>
+            <caption label="&connections.dialog.scheduler;"/>
+            <grid>
+                <columns>
+                    <column />
+                    <column flex="1" />
+                </columns>
+                <rows>
+                    <row align="center">
+                        <label control="scheduler-frequency"
+                            value="&connections.dialog.scheduler.frequency;" />
+                            <hbox flex="1">
+                        <hbox pack="left" width="25">
+                            <menulist id="scheduler-frequency" preference="scheduler-frequency-pref">
+                                <menupopup onpopuphidden="ConnectionsPreferences.preferenceSettings.updateScheduler();">
+                                    <menuitem label="hour" value="3600000" />
+                                    <menuitem label="2 hours" value="7200000" />
+                                    <menuitem label="3 hours" value="10800000" />
+                                    <menuitem label="4 hours" value="14400000" />
+                                    <menuitem label="5 hours" value="18000000" />
+                                    <menuitem label="6 hours" value="21600000" />
+                                    <menuitem label="7 hours" value="25200000" />
+                                    <menuitem label="8 hours" value="28800000" />
+                                    <menuitem label="9 hours" value="32400000" />
+                                    <menuitem label="10 hours" value="36000000" />
+                                    <menuitem label="11 hours" value="39600000" />
+                                    <menuitem label="12 hours" value="43200000" />
+                                    <menuitem label="13 hours" value="46800000" />
+                                    <menuitem label="14 hours" value="50400000" />
+                                    <menuitem label="15 hours" value="54000000" />
+                                    <menuitem label="16 hours" value="57600000" />
+                                    <menuitem label="17 hours" value="61200000" />
+                                    <menuitem label="18 hours" value="64800000" />
+                                    <menuitem label="19 hours" value="68400000" />
+                                    <menuitem label="20 hours" value="72000000" />
+                                    <menuitem label="21 hours" value="75600000" />
+                                    <menuitem label="22 hours" value="79200000" />
+                                    <menuitem label="23 hours" value="82800000" />
+                                    <menuitem label="day" value="86400000" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <hbox id="hour-row" style="display:none" align="center">
+                            <label control="scheduler-hour"
+                                value="&connections.dialog.scheduler.hour;" />
+                            <hbox pack="center" width="30" align="center">
+                                <menulist preference="scheduler-hour-pref">
+                                    <menupopup>
+                                        <menuitem label="00" value="0" />
+                                        <menuitem label="01" value="1" />
+                                        <menuitem label="02" value="2" />
+                                        <menuitem label="03" value="3" />
+                                        <menuitem label="04" value="4" />
+                                        <menuitem label="05" value="5" />
+                                        <menuitem label="06" value="6" />
+                                        <menuitem label="07" value="7" />
+                                        <menuitem label="08" value="8" />
+                                        <menuitem label="09" value="9" />
+                                        <menuitem label="10" value="10" />
+                                        <menuitem label="11" value="11" />
+                                        <menuitem label="12" value="12" />
+                                        <menuitem label="13" value="13" />
+                                        <menuitem label="14" value="14" />
+                                        <menuitem label="15" value="15" />
+                                        <menuitem label="16" value="16" />
+                                        <menuitem label="17" value="17" />
+                                        <menuitem label="18" value="18" />
+                                        <menuitem label="19" value="19" />
+                                        <menuitem label="20" value="20" />
+                                        <menuitem label="21" value="21" />
+                                        <menuitem label="22" value="22" />
+                                        <menuitem label="23" value="23" />
+                                    </menupopup>
+                                </menulist>
+                                <label value=":" />
+                                <label id="scheduler-minute" preference="scheduler-minute-pref" />
+                                <label value=":" />
+                                <label id="scheduler-second" preference="scheduler-second-pref" />
+                            </hbox>
+                        </hbox>
+                        </hbox>
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <separator flex="1" />
+    </prefpane>
+</prefwindow>

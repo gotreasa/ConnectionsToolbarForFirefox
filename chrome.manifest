@@ -1,0 +1,6 @@
+content   connections-toolbar                   chrome/content/
+skin      connections-toolbar    classic/1.0    chrome/skin/
+locale    connections-toolbar    en             chrome/locale/en/
+
+overlay     chrome://browser/content/browser.xul            chrome://connections-toolbar/content/browserOverlay.xul
+style       chrome://global/content/customizeToolbar.xul    chrome://connections-toolbar/skin/connectionsToolbar.css
