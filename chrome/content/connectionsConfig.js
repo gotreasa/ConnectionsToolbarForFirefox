@@ -128,12 +128,9 @@ ConnectionsToolbar.config = {
                 var body = document.createElementNS(
                         "http://www.w3.org/1999/xhtml", "body");
                 responseXML.documentElement.appendChild(body);
-                body
-                        .appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"]
-                                .getService(
-                                        Components.interfaces.nsIScriptableUnescapeHTML)
-                                .parseFragment(response.responseText, false,
-                                        null, body));
+                body.appendChild(Components.classes["@mozilla.org/parserutils;1"]
+                                .getService(Components.interfaces.nsIParserUtils)
+                                .parseFragment(response.responseText, 0, false, null, body));
 
                 try {
                     Application.prefs
