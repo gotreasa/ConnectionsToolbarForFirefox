@@ -413,9 +413,7 @@ ConnectionsToolbar.browserOverlay = {
                 + url + "',event, 'tab');return false;";
         document.getElementById("openListItemTab").setAttribute("oncommand", command);
         
-        document.getElementById("copyUrl").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.copyUrlToClipboard('"
-                +url + "');");
-        
+        document.getElementById("copyUrl").addEventListener("command", function(){ConnectionsToolbar.browserOverlay.copyUrlToClipboard(url)});
 
         downloadUrl = element.getAttribute("downloadUrl");
         if(downloadUrl == "" || downloadUrl == "undefined") {
@@ -430,30 +428,8 @@ ConnectionsToolbar.browserOverlay = {
     },
     
     copyUrlToClipboard : function(text) {
-        var str = Components.classes["@mozilla.org/supports-string;1"].
-        createInstance(Components.interfaces.nsISupportsString);
-        if (!str) {
-            return false;
-        }
-
-        str.data = text;
-
-        var transfer = Components.classes["@mozilla.org/widget/transferable;1"].
-        createInstance(Components.interfaces.nsITransferable);
-        if (!transfer) {
-            return false;
-        }
-
-        transfer.addDataFlavor("text/unicode");
-        transfer.setTransferData("text/unicode", str, text.length * 2);
-
-        var clipboard = Components.interfaces.nsIClipboard;
-        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipboard);
-        if (!clip) {
-            return false;
-        }
-
-        clip.setData(transfer, null, clipboard.kGlobalClipboard); 
+        const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
+		gClipboardHelper.copyString(text);
     }
 };
 
