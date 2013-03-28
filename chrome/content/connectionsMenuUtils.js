@@ -25,10 +25,13 @@ ConnectionsToolbar.menuUtils = {
         var item = document.createElementNS(XUL_NS, "menuitem");
 
         item.setAttribute("label", aLabel);
-        var command = "ConnectionsToolbar.browserOverlay.gotoURL('"
-        + url + "',event);return false;";
-        item.setAttribute("oncommand", command);
-        item.setAttribute("onclick", "checkForMiddleClick(this, event)");
+        item.addEventListener("command", function(){ 
+        	ConnectionsToolbar.browserOverlay.gotoURL(url,this);
+        	return false;
+        });
+        item.addEventListener("click", function(){
+        	checkForMiddleClick(this.target, this);
+        });
         item.setAttribute("context", "menulistContext");
         item.setAttribute("tooltiptext", aLabel+"\n"+url);
         item.setAttribute("url", url);
