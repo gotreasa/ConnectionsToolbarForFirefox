@@ -25,12 +25,15 @@ ConnectionsToolbar.menuUtils = {
         var item = document.createElementNS(XUL_NS, "menuitem");
 
         item.setAttribute("label", aLabel);
-        item.addEventListener("command", function(){ 
-        	ConnectionsToolbar.browserOverlay.gotoURL(url,this);
+        item.addEventListener("command", function(event){ 
+        	ConnectionsToolbar.browserOverlay.gotoURL(url,event);
         	return false;
         });
-        item.addEventListener("click", function(){
-        	checkForMiddleClick(this.target, this);
+        item.addEventListener("click", function(event){
+        	if (event.button == 1){
+        		ConnectionsToolbar.browserOverlay.gotoURL(url,event,"tab");
+        	}
+        	return false;
         });
         item.setAttribute("context", "menulistContext");
         item.setAttribute("tooltiptext", aLabel+"\n"+url);
