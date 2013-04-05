@@ -263,8 +263,9 @@ ConnectionsToolbar.componentService = {
         if (i >= 0
                 && ("undefined" === typeof(content.document)
                 || content.document.getElementById(buttonId) == null)) {
-            setTimeout('ConnectionsToolbar.componentService.clickButton(' + (--i)
-                    + ',\'' + buttonId + '\',\'' + content + '\',' + callee + ')', 1000);
+            setTimeout(function() {
+            			ConnectionsToolbar.componentService.clickButton();
+            		}, 1000, [--i, buttonId, content, callee]);
         } else if ("undefined" !== typeof(content.document)) {
             content.document.body
                     .removeEventListener("load", callee, true);
