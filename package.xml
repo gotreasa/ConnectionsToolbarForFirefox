@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * © Copyright IBM Corp. 2011, 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ -->
+<project name="package-xpi" default="build-zip" basedir=".">
+
+    <!--Variables-->
+    <property name="build.dir" value="${basedir}/build" />
+
+    <target name="clean">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${build.dir}" />
+        </delete>
+    </target>
+
+    <target name="copy">
+        <mkdir dir="${build.dir}" />
+        <copy todir="${build.dir}/chrome">
+            <fileset dir="chrome" />
+        </copy>
+        <copy todir="${build.dir}/defaults">
+            <fileset dir="defaults" />
+        </copy>
+        <copy todir="${build.dir}">
+            <fileset file="chrome.manifest" />
+            <fileset file="install.rdf" />
+            <fileset file="${update.file.name}" />
+            <fileset file="LICENSE" />
+            <fileset file="NOTICE" />
+        </copy>
+    </target>
+
+    <target name="build-zip" depends="clean,copy">
+        <replace dir="${build.dir}" includes="*.rdf" token="@toolbar.version@" value="${toolbar.version}" />
+        <replace dir="${build.dir}" includes="*.rdf" token="em:minVersion=&quot;10.0&quot;" value="em:minVersion=&quot;${firefox.version.min}&quot;" />
+        <replace dir="${build.dir}" includes="*.rdf" token="em:maxVersion=&quot;20.0&quot;" value="em:maxVersion=&quot;${firefox.version.max}&quot;" />
+        <replace file="${build.dir}/install.rdf" token="@update.url@" value="${update.url}" />
+        <replace file="${build.dir}/chrome/content/browserOverlay.js" token="@blog.url.base@" value="${blog.url.base}" />
+        <replace file="${build.dir}/chrome/content/browserOverlay.js" token="@blog.url.entry@" value="${blog.url.entry}" />
+        <zip destfile="${build.dir}/connections-toolbar${toolbar.version}.xpi" basedir="${build.dir}" encoding="UTF-8" excludes="*">
+            <fileset file="${build.dir}/chrome.manifest" />
+            <fileset file="${build.dir}/install.rdf" />
+            <fileset file="${build.dir}/LICENSE" />
+            <fileset file="${build.dir}/NOTICE" />
+        </zip>
+        <checksum file="${build.dir}/connections-toolbar${toolbar.version}.xpi" algorithm="SHA-256" property="checksum.value" />
+        <replace file="${build.dir}/${update.file.name}" token="@CHECKSUM@" value="${checksum.value}" />
+    </target>
+</project>

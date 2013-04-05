@@ -108,7 +108,9 @@ ConnectionsToolbar.scheduler = {
         }
 
         var currentDate = new Date();
-        setTimeout("ConnectionsToolbar.scheduler.run()", (parseInt(Application.prefs
+        setTimeout(function() {
+        		ConnectionsToolbar.scheduler.run();
+        	}, (parseInt(Application.prefs
                 .get("extensions.connections-toolbar.scheduler.next-run").value)
                 - currentDate.getTime()));
     }

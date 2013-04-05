@@ -22,6 +22,12 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 };
 
 ConnectionsToolbar.browserOverlay = {
+    openItemEvent: null,
+    openTabItemEvent: null,
+    openButtonEvent: null,
+    openTabButtonEvent: null,
+    createButtonEvent: null,
+    createTabButtonEvent: null,
     init : function() {
         ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
                 "Initialising the toolbar.");
@@ -38,7 +44,7 @@ ConnectionsToolbar.browserOverlay = {
                 		= extension.version;
             } else if(Application.prefs.get("extensions.connections-toolbar.update.version").value
                     != extension.version) {
-                openUILinkIn("https://www.ibm.com/developerworks/mydeveloperworks/blogs/4aee1970-6f11-45de-aa2a-1d53f0fc4b5f/entry/release_of_ibm_connections_toolbar_3_0_1", "tab");
+                openUILinkIn("@blog.url.base@@blog.url.entry@", "tab");
                 Application.prefs.get("extensions.connections-toolbar.update.version").value
                         = extension.version;
             }
@@ -366,35 +372,56 @@ ConnectionsToolbar.browserOverlay = {
                 .getService(Ci.nsIPrefBranch);
             isCreateEnabled = prefService.getBoolPref("extensions.connections-toolbar.create.button.enabled");
 
-            document.getElementById("openItem").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.goComponent(\""+component+"\", event, \"\", false)");
-            document.getElementById("openItem").setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".open"));
+            var openItem = document.getElementById("openItem");
+            openItem.removeEventListener("command", ConnectionsToolbar.browserOverlay.openButtonEvent);
+            ConnectionsToolbar.browserOverlay.openButtonEvent = function() {
+            	ConnectionsToolbar.browserOverlay.goComponent(component, event, "", false);
+            };
+            openItem.addEventListener("command", ConnectionsToolbar.browserOverlay.openButtonEvent);
+            openItem.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".open"));
             if(!isCreateEnabled) {
-                document.getElementById("openItem").setAttribute("default", "true");
+            	openItem.setAttribute("default", "true");
             } else {
-                document.getElementById("openItem").setAttribute("default", "false");
+            	openItem.setAttribute("default", "false");
             }
 
-            document.getElementById("openItemTab").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.goComponent(\""+component+"\", event, \"tab\", false)");
-            document.getElementById("openItemTab").setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".tab"));
+            var openItemTab = document.getElementById("openItemTab");
+            openItemTab.removeEventListener("command", ConnectionsToolbar.browserOverlay.openButtonTabEvent);
+            ConnectionsToolbar.browserOverlay.openButtonTabEvent = function() {
+        		ConnectionsToolbar.browserOverlay.goComponent(component, event, "tab", false);
+            };
+            openItemTab.addEventListener("command", ConnectionsToolbar.browserOverlay.openButtonTabEvent);
+            openItemTab.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".tab"));
 
             if(component != "hot" && component != "homepage" && component != "profiles") {
-                document.getElementById("createItem").hidden = false;
-                document.getElementById("createItem").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.goComponent(\""+component+"\", event, \"\", true)");
-                document.getElementById("createItem").setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".create.open"));
+            	var createItem = document.getElementById("createItem");
+            	createItem.removeEventListener("command", ConnectionsToolbar.browserOverlay.createButtonEvent);
+                createItem.hidden = false;
+                ConnectionsToolbar.browserOverlay.createButtonEvent = function() {
+                	ConnectionsToolbar.browserOverlay.goComponent(component, event, "", true);
+                	createItem.removeEventListener();
+                };
+                createItem.addEventListener("command", ConnectionsToolbar.browserOverlay.createButtonEvent);
+                createItem.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".create.open"));
                 if(isCreateEnabled) {
-                    document.getElementById("createItem").setAttribute("default", "true");
+                	createItem.setAttribute("default", "true");
                 } else {
-                    document.getElementById("createItem").setAttribute("default", "false");
+                	createItem.setAttribute("default", "false");
                 }
 
                 document.getElementById("buttonContextSeparator").hidden = false;
 
+            	var createItemTab = document.getElementById("createItemTab");
+            	createItemTab.removeEventListener("command", ConnectionsToolbar.browserOverlay.createButtonTabEvent);
                 if(component != "dogear") {
-                    document.getElementById("createItemTab").hidden = false;
-                    document.getElementById("createItemTab").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.goComponent(\""+component+"\", event, \"tab\", true)");
-                    document.getElementById("createItemTab").setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".create.tab"));
+                	createItemTab.hidden = false;
+                	ConnectionsToolbar.browserOverlay.createButtonTabEvent = function() {
+                		ConnectionsToolbar.browserOverlay.goComponent(component, event, "tab", true);
+                	};
+                	createItemTab.addEventListener("command", ConnectionsToolbar.browserOverlay.createButtonTabEvent);
+                	createItemTab.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".create.tab"));
                 } else {
-                    document.getElementById("createItemTab").hidden = true;
+                	createItemTab.hidden = true;
                 }
             } else {
                 document.getElementById("openItem").setAttribute("default", "true");
@@ -406,30 +433,72 @@ ConnectionsToolbar.browserOverlay = {
     },
     
     showHideMenuItems : function(element, event) {
-        document.getElementById("openListItem").setAttribute("oncommand", element.getAttribute("oncommand"));
-
         var url = element.getAttribute("url");
-        var command = "ConnectionsToolbar.browserOverlay.gotoURL('"
-                + url + "',event, 'tab');return false;";
-        document.getElementById("openListItemTab").setAttribute("oncommand", command);
-        
-        document.getElementById("copyUrl").addEventListener("command", function(){ConnectionsToolbar.browserOverlay.copyUrlToClipboard(url)});
+        var openListItem =document.getElementById("openListItem");
+        openListItem.removeEventListener("command", ConnectionsToolbar.browserOverlay.openItemEvent);
+        ConnectionsToolbar.browserOverlay.openItemEvent = function() {
+        	ConnectionsToolbar.browserOverlay.gotoURL(url, event, "");
+        	return false;
+        };
+        openListItem.addEventListener("command", ConnectionsToolbar.browserOverlay.openItemEvent);
 
-        downloadUrl = element.getAttribute("downloadUrl");
+        var openListItemTab = document.getElementById("openListItemTab");
+        openListItemTab.removeEventListener("command", ConnectionsToolbar.browserOverlay.openTabItemEvent);
+        ConnectionsToolbar.browserOverlay.openTabItemEvent = function() {
+        	ConnectionsToolbar.browserOverlay.gotoURL(url, event, "tab");
+        	return false;
+        };
+        openListItemTab.addEventListener("command", ConnectionsToolbar.browserOverlay.openTabItemEvent);
+        
+        var copyUrl = document.getElementById("copyUrl");
+        copyUrl.addEventListener("command", 
+        		function() {
+        	ConnectionsToolbar.browserOverlay.copyUrlToClipboard(url);
+        	copyUrl.removeEventListener();
+        });
+        
+
+        var downloadUrl = element.getAttribute("downloadUrl");
+        var downloadItem = document.getElementById("downloadItem");
         if(downloadUrl == "" || downloadUrl == "undefined") {
             document.getElementById("menulistContextSeparator").hidden = true;
-            document.getElementById("downloadItem").hidden = true;
+            downloadItem.hidden = true;
         } else {
             document.getElementById("menulistContextSeparator").hidden = false;
-            document.getElementById("downloadItem").hidden = false;
-            document.getElementById("downloadItem").setAttribute("oncommand", "ConnectionsToolbar.browserOverlay.gotoURL('"
-                    + downloadUrl +"');");
+            downloadItem.hidden = false;
+            downloadItem.addEventListener("command", 
+            		function() {
+            	ConnectionsToolbar.browserOverlay.gotoURL(downloadUrl);
+            	downloadItem.removeEventListener();
+            });
         }
     },
     
     copyUrlToClipboard : function(text) {
-        const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
-		gClipboardHelper.copyString(text);
+        var str = Components.classes["@mozilla.org/supports-string;1"].
+        createInstance(Components.interfaces.nsISupportsString);
+        if (!str) {
+            return false;
+        }
+
+        str.data = text;
+
+        var transfer = Components.classes["@mozilla.org/widget/transferable;1"].
+        createInstance(Components.interfaces.nsITransferable);
+        if (!transfer) {
+            return false;
+        }
+
+        transfer.addDataFlavor("text/unicode");
+        transfer.setTransferData("text/unicode", str, text.length * 2);
+
+        var clipboard = Components.interfaces.nsIClipboard;
+        var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipboard);
+        if (!clip) {
+            return false;
+        }
+
+        clip.setData(transfer, null, clipboard.kGlobalClipboard); 
     }
 };
 
