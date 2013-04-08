@@ -70,7 +70,7 @@ ConnectionsToolbar.access = {
         var xhReq = new XMLHttpRequest();
         var loginURL = Application.prefs
                 .get("extensions.connections-toolbar.search.url").value
-                + "/j_security_check";
+                + "/j_security_check/";
         ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
                 "Logging into Connections - " + loginURL);
         var loginInfo = ConnectionsToolbar.access.getLoginInfo();
