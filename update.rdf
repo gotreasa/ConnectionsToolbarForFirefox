@@ -30,7 +30,7 @@
                                 </id>
                                 <minVersion>@firefox.version.min@</minVersion>
                                 <maxVersion>@firefox.version.max@</maxVersion>
-                                <updateLink>https://w3-connections.ibm.com/files/form/anonymous/api/library/1683f9e8-d50e-499e-ad21-a1a18f871922/document/3439ef15-285d-42fa-a1b6-a857f22c20ab/media/connections-toolbar1.0.2.xpi
+                                <updateLink>https://w3-connections.ibm.com/files/form/anonymous/api/library/1683f9e8-d50e-499e-ad21-a1a18f871922/document/3439ef15-285d-42fa-a1b6-a857f22c20ab/media/connections-toolbar@toolbar.version@.xpi
                                 </updateLink>
                                 <updateHash>
                                     sha256:@CHECKSUM@
