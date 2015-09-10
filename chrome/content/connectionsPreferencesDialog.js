@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -22,8 +22,7 @@ ConnectionsPreferences.preferenceSettings = {
     usernameFieldName : "j_username",
     passwordFieldName : "j_password",
     init : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Loaded the Connections Preference Dialog js file");
+        ConnectionsToolbar.logger.info("Loaded the Connections Preference Dialog js file");
         if(ConnectionsToolbar.preferences.setCredentials) {
             prefwindow = document.getElementById("connections-preferences");
             paneToLoad = prefwindow.preferencePanes[0];
@@ -33,7 +32,7 @@ ConnectionsPreferences.preferenceSettings = {
     },
     
     populateLoginForm : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Populating the login form");
+        ConnectionsToolbar.logger.info("Populating the login form");
         try {
             var loginInfo = ConnectionsToolbar.access
                     .getLoginInfo();
@@ -44,19 +43,16 @@ ConnectionsPreferences.preferenceSettings = {
                         .getElementById(ConnectionsPreferences.preferenceSettings.passwordFieldName).value = loginInfo.password;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
+            ConnectionsToolbar.logger.error(e);
             ConnectionsToolbar.logger
-                    .log(
-                            ConnectionsToolbar.constants.LOGGER.ERROR,
-                            "Unable to continue. ConnectionsPreferences.preferenceSettings "
+                    .error("Unable to continue. ConnectionsPreferences.preferenceSettings "
                                     + "configuration screen needs login info.");
             window.close();
         }
     },
     submit : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Submitting the preference pane");
-        Application.prefs
-                .get("extensions.connections-toolbar.configured").value = false;
+        ConnectionsToolbar.logger.info("Submitting the preference pane");
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.configured", false);
 
         var hostname = ConnectionsToolbar.access.url;
         var username = document
@@ -77,9 +73,8 @@ ConnectionsPreferences.preferenceSettings = {
             ConnectionsToolbar.scheduler
                     .disableToolbarAndRefresh();
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                    "Unable to save login info.");
+            ConnectionsToolbar.logger.error(e);
+            ConnectionsToolbar.logger.error("Unable to save login info.");
             return false;
         }
         return true;
@@ -110,7 +105,7 @@ ConnectionsPreferences.preferenceSettings = {
 
         if (url.substr(-1) === "/") {
             url = url.slice(0, -1);
-            Application.prefs.get("extensions.connections-toolbar.search.url").value = url;
+            ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.search.url", url);
         }
         var regex = /https\:\/\/([a-zA-Z\d][\a-z\A-Z\d\-\.]*)(:\d{1,5})?([\/\?\#].*)?(search)$/;
         var results = url.match(regex);
@@ -134,21 +129,22 @@ ConnectionsPreferences.preferenceSettings = {
 
     validateOnClose : function() {
         if (ConnectionsPreferences.preferenceSettings.validateURL() == true) {
+            ConnectionsPreferences.preferenceSettings.submit();
             window.close();
         }
     },
 
     updateScheduler : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "The value is: "+document.getElementById("scheduler-frequency").getAttribute("value"));
+        ConnectionsToolbar.logger.info("The value is: "+document.getElementById("scheduler-frequency").getAttribute("value"));
         if(document.getElementById("scheduler-frequency").getAttribute("value") == 86400000) {
             document.getElementById("hour-row").setAttribute("style", "");
         } else {
             document.getElementById("hour-row").setAttribute("style", "display:none");
         }
-        document.getElementById("scheduler-minute").setAttribute("value", Application.prefs
-                .get("extensions.connections-toolbar.scheduler.minute").value);
-        document.getElementById("scheduler-second").setAttribute("value", Application.prefs
-                .get("extensions.connections-toolbar.scheduler.second").value);
+        document.getElementById("scheduler-minute").setAttribute("value", 
+        		ConnectionsToolbar.browserOverlay.prefService.getIntPref("extensions.connections-toolbar.scheduler.minute"));
+        document.getElementById("scheduler-second").setAttribute("value",
+        		ConnectionsToolbar.browserOverlay.prefService.getIntPref("extensions.connections-toolbar.scheduler.second"));
     }
 };
 

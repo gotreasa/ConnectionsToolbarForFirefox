@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,36 +21,41 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 ConnectionsToolbar.feed = {
     processResponseLock : 0,
         
-    fetchFeed : function(component, requestURL, isRecommendationsRequest) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Fetching "
-                + (isRecommendationsRequest ? "recommendations" : "content")
-                + " feed for " + component);
+    fetchFeed : function(component, requestURL, type) {
+        if((type == ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING
+                && component !== ConnectionsToolbar.constants.COMPONENTS.DOGEAR)
+                || type === ConnectionsToolbar.constants.DATA_TYPE.CONTENT
+                || type === ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
+            ConnectionsToolbar.logger.info("Fetching " + type + " feed for "
+                    + component);
 
-        var xhReq = new XMLHttpRequest();
-        xhReq.open("GET", requestURL, true);
-        xhReq.setRequestHeader("User-Agent", "connections-toolbar");
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.DEBUG, "Request URL is "+requestURL);
-        ConnectionsToolbar.feed.processResponseLock++;
-        xhReq.onreadystatechange = function() {
-            if (xhReq.readyState != 4) {
-                return;
-            }
-
-            try {
-                ConnectionsToolbar.feed.processResponse(component, xhReq,
-                        isRecommendationsRequest);
-            } catch (e) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-                ConnectionsToolbar.feed.processError(component,
-                        isRecommendationsRequest, e);
-            }
-        };
-
-        xhReq.onError = function() {
-            ConnectionsToolbar.feed.processError(component, isRecommendationsRequest, "XHR error");
-        };
-
-        xhReq.send();
+            var xhReq = new XMLHttpRequest();
+            xhReq.open("GET", requestURL, true);
+            xhReq.setRequestHeader("User-Agent", "connections-toolbar");
+            ConnectionsToolbar.logger.info("Request URL is "+requestURL);
+            ConnectionsToolbar.feed.processResponseLock++;
+            xhReq.onreadystatechange = function() {
+                if (xhReq.readyState != 4) {
+                    return;
+                }
+    
+                try {
+                    ConnectionsToolbar.feed.processResponse(component, xhReq,
+                            type);
+                } catch (e) {
+                    ConnectionsToolbar.logger.error(e);
+                    ConnectionsToolbar.feed.processError(component,
+                            type, e);
+                }
+            };
+    
+            xhReq.onError = function() {
+                ConnectionsToolbar.feed.processError(component, type, "XHR error");
+            };
+    
+            xhReq.send();
+    
+        }
     },
 
     /**
@@ -58,7 +63,7 @@ ConnectionsToolbar.feed = {
      * 
      */
     processResponse : function(requestedComponent, response,
-            isRecommendationsRequest) {
+            type) {
         var serviceAvailable = false;
         if (response.responseXML != null) {
             serviceAvailable = true;
@@ -66,19 +71,16 @@ ConnectionsToolbar.feed = {
             // window.alert(response.responseText);
 
             var items = new Array();
-	
-			var feedNodeName = "feed";
-			if (ConnectionsToolbar.config.version < 4 && isRecommendationsRequest) {
+
+            var feedNodeName = "feed";
+            if (ConnectionsToolbar.config.version < 4
+                    && type == ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
                 feedNodeName = "results";
-			}
-			            
-			//if (isRecommendationsRequest){
-            //	ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "requestedComponent is "+requestedComponent+"; feedNodeName is "+feedNodeName+"    "+(new XMLSerializer()).serializeToString(response.responseXML));
-            //}
+            }
 
             var feedNode = response.responseXML
                     .getElementsByTagName(feedNodeName)[0];
-            if (!isRecommendationsRequest && feedNode == null
+            if (type != ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS && feedNode == null
                     && requestedComponent == "communities") {
                 feedNodeName = "sp_0:feed";
                 feedNode = response.responseXML
@@ -101,7 +103,8 @@ ConnectionsToolbar.feed = {
                     var urlElement = entry.getElementsByTagName("link")[0];
                     var url = urlElement.getAttribute("href");
                     var download_link = null;
-                    if (!isRecommendationsRequest
+                    if (type != ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS
+//                            && type != ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING
                             && requestedComponent != "dogear") {
                         var urlElements = entry.getElementsByTagName("link");
                         for ( var j = 0; j < urlElements.length; j++) {
@@ -152,52 +155,17 @@ ConnectionsToolbar.feed = {
 
                     var component = requestedComponent;
 
-                    if (requestedComponent == "allConnections") {
-                        if (sourceElement != null) {
-                            component = sourceElement.getAttribute("term");
-                            if (component.indexOf(":") != -1) {
-                                var array = component.split(":");
-                                component = array[0];
-                            } else if (component == "default") {
-                                component = requestedComponent;
-                            }
-                        } else {
-                            component = requestedComponent;
-                        }
-
-                        if (component.indexOf("wiki") >= 0) {
-                            component = "wikis";
-                        }
-                        if (component.indexOf("bookmark") >= 0) {
-                            component = "bookmarks";
-                        } else if (component.indexOf("forum") >= 0) {
-                            component = "forums";
-                        } else if (component.indexOf("blog") >= 0) {
-                            component = "blogs";
-                        } else if (component.indexOf("activity") >= 0) {
-                            component = "activities";
-                        } else if (component.indexOf("community") >= 0) {
-                            component = "communities";
-                        }
-                    }
-
                     var item = new Array();
                     item[ConnectionsToolbar.constants.TITLE] = title;
                     item[ConnectionsToolbar.constants.URL] = url;
                     item[ConnectionsToolbar.constants.DOWNLOAD] = download_link;
                     item[ConnectionsToolbar.constants.COMPONENT] = component;
-                    item[ConnectionsToolbar.constants.TYPE] = isRecommendationsRequest ? "recommend"
-                            : "my";
-                    if(requestedComponent == "allConnections") {
-                        item[ConnectionsToolbar.constants.TYPE] = "recommendAll";
-                    }
+                    item[ConnectionsToolbar.constants.TYPE] = type;
                     items.push(item);
                 }
                 ConnectionsToolbar.database.updateContentTable(items);
-                var type = isRecommendationsRequest ? "recommend"
-                        : "my";
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Exiting the " + type
-                        + " " + requestedComponent + " component was fetched");
+                ConnectionsToolbar.logger.info("Exiting the " + type + " "
+                        + requestedComponent + " component was fetched");
             }
             ConnectionsToolbar.feed.processResponseLock--;
             if(ConnectionsToolbar.feed.processResponseLock == 0) {
@@ -206,7 +174,7 @@ ConnectionsToolbar.feed = {
         }
 
         if (!serviceAvailable) {
-            ConnectionsToolbar.feed.processError(requestedComponent, isRecommendationsRequest, "The service is not available");
+            ConnectionsToolbar.feed.processError(requestedComponent, type, "The service is not available");
         }
     },
 
@@ -214,11 +182,9 @@ ConnectionsToolbar.feed = {
      * Enter description here...
      * 
      */
-    processError : function(component, isRecommendationsRequest, exception) {
+    processError : function(component, type, exception) {
         ConnectionsToolbar.feed.processResponseLock--;
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                "Error occurred while processing "
-                        + (isRecommendationsRequest ? "recommendations"
-                                : "content") + " feed for " + component + ": " + exception);
+        ConnectionsToolbar.logger.error("Error occurred while processing "
+                + type + " feed for " + component + ": " + exception);
     }
 };

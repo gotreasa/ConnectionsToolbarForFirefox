@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -32,10 +32,9 @@ ConnectionsToolbar.database = {
      * Enter description here...
      */
     openDatabase : function() {
-        let
-        file = FileUtils.getFile("ProfD",
+        var file = FileUtils.getFile("ProfD",
                 ["connections_toolbar_firefox.sqlite"]);
-        mDBConn = Services.storage.openDatabase(file);
+        var mDBConn = Services.storage.openDatabase(file);
         return mDBConn;
         // Will also create the file if it does not exist
     },
@@ -46,46 +45,29 @@ ConnectionsToolbar.database = {
         dbConn.asyncClose();
     },
     /**
-     * Enter description here...
-     */
-    createTable : function(tableName) {
-        let
-        statement = mDBConn
-                .createStatement("CREATE "
-                        + tableName
-                        + " (Title char(256) NOT NULL, Url char(256) NOT NULL PRIMARY)");
-    },
-    /**
-     * Enter description here...
+     * Updates the row in the table
      */
     updateRow : function(tableName, columnValues, dbConn) {
-        return statement = dbConn
-                .createStatement("INSERT INTO "
-                        + tableName
-                        + " VALUES ( '"
-                        + ConnectionsToolbar.database
-                                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.TITLE])
-                        + "', '"
-                        + ConnectionsToolbar.database
-                                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.URL])
-                        + "', '"
-                        + ConnectionsToolbar.database
-                                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.TYPE])
-                        + "', '"
-                        + ConnectionsToolbar.database
-                                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.COMPONENT])
-                        + "', '"
-                        + ConnectionsToolbar.database
-                                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.DOWNLOAD])
-                        + "' );");
+        var statement =  dbConn
+                .createStatement("INSERT INTO toolbar_content VALUES ( :title, :url, :type, :component, :download );");
+        statement.params.title = ConnectionsToolbar.database
+                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.TITLE]);
+        statement.params.url = ConnectionsToolbar.database
+                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.URL]);
+        statement.params.type = ConnectionsToolbar.database
+                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.TYPE]);
+        statement.params.component = ConnectionsToolbar.database
+                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.COMPONENT]);
+        statement.params.download = ConnectionsToolbar.database
+                .escapeApostrophe(columnValues[ConnectionsToolbar.constants.DOWNLOAD]);
+        return statement;
     },
     /**
-     * Enter description here...
+     * Updates the content table with the content
      */
     updateContentTable : function(rowsArray) {
-        let
-        mDBConn = ConnectionsToolbar.database.openDatabase();
-        statements = [];
+        var mDBConn = ConnectionsToolbar.database.openDatabase();
+        var statements = [];
         for (row in rowsArray) {
             statements.push(ConnectionsToolbar.database.updateRow("toolbar_content", rowsArray[row],
                     mDBConn));
@@ -94,14 +76,13 @@ ConnectionsToolbar.database = {
         mDBConn.asyncClose();
     },
     /**
-     * Enter description here...
+     * Retrieve all of the content from the content table
      */
     retrieveContentTable : function() {
-        mDBConn = ConnectionsToolbar.database.openDatabase();
-        let
-        statement = mDBConn
+        var mDBConn = ConnectionsToolbar.database.openDatabase();
+        var statement = mDBConn
                 .createStatement("SELECT * FROM toolbar_content ORDER BY "
-                        + ConnectionsToolbar.constants.TITLE + " COLLATE NOCASE ASC");
+                        + "title COLLATE NOCASE ASC");
         statement
                 .executeAsync({
                     handleResult : function(aResultSet) {
@@ -109,51 +90,42 @@ ConnectionsToolbar.database = {
                     },
 
                     handleError : function(aError) {
-                        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                aError.message);
+                        ConnectionsToolbar.logger.error(aError.message);
                     },
 
                     handleCompletion : function(aReason) {
                         if (aReason != Components.interfaces.mozIStorageStatementCallback.REASON_FINISHED) {
-                            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                                    "Query canceled or aborted!");
+                            ConnectionsToolbar.logger.info("Query canceled or aborted!");
                         }
                         ConnectionsToolbar.logger
-                                .log(
-                                        ConnectionsToolbar.constants.LOGGER.INFO,
-                                        "Content retrieved and going to populate the UI - "
-                                                + Components.interfaces.mozIStorageStatementCallback.REASON_FINISHED);
+                                .info("Content retrieved and going to populate the UI - "
+                                        + Components.interfaces.mozIStorageStatementCallback.REASON_FINISHED);
                         ConnectionsToolbar.browserOverlay.populateUi();
                     }
                 });
         mDBConn.asyncClose();
     },
     /**
-     * Enter description here...
+     * Create the statement to check the table exists
      */
-    checkTableExistsStatement : function(tableName, mDBConn) {
-        return statement = mDBConn
-                .createStatement("CREATE TABLE IF NOT EXISTS " + tableName
-                        + " (" + ConnectionsToolbar.constants.TITLE
-                        + " varchar(256) NOT NULL, " + ConnectionsToolbar.constants.URL
-                        + " varchar(256) NOT NULL, " + ConnectionsToolbar.constants.TYPE
-                        + " varchar(8) NOT NULL, "
-                        + ConnectionsToolbar.constants.COMPONENT
-                        + " varchar(25) NOT NULL, "
-                        + ConnectionsToolbar.constants.DOWNLOAD + " varchar(256), "
-                        + "PRIMARY KEY (" + ConnectionsToolbar.constants.TITLE + ", "
-                        + ConnectionsToolbar.constants.URL + ", " + ConnectionsToolbar.constants.TYPE
-                        + ", " + ConnectionsToolbar.constants.COMPONENT + "))");
+    checkTableExistsStatement : function(mDBConn) {
+    	return mDBConn
+                .createStatement("CREATE TABLE IF NOT EXISTS toolbar_content" +
+                        " ( title varchar(256) NOT NULL, " +
+                        "url varchar(256) NOT NULL, " +
+                        "type varchar(8) NOT NULL, " +
+                        "component varchar(25) NOT NULL, " +
+                        "download_link varchar(256), " +
+                        "PRIMARY KEY ( title, url , type, component))");
     },
 
     /**
-     * Enter description here...
+     * Check that the table exists
      */
     checkTablesExist : function() {
         var statements = [];
         var mDBConn = ConnectionsToolbar.database.openDatabase();
-        statements.push(ConnectionsToolbar.database.checkTableExistsStatement("toolbar_content",
-                mDBConn));
+        statements.push(ConnectionsToolbar.database.checkTableExistsStatement(mDBConn));
         mDBConn.executeAsync(statements, statements.length);
         mDBConn.asyncClose();
     },
@@ -170,14 +142,12 @@ ConnectionsToolbar.database = {
                     },
 
                     handleError : function(aError) {
-                        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                aError.message);
+                        ConnectionsToolbar.logger.error(aError.message);
                     },
 
                     handleCompletion : function(aReason) {
                         if (aReason != Components.interfaces.mozIStorageStatementCallback.REASON_FINISHED) {
-                            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                                    "Query canceled or aborted!");
+                            ConnectionsToolbar.logger.info("Query canceled or aborted!");
                         }
                     }
                 });
@@ -188,8 +158,7 @@ ConnectionsToolbar.database = {
      * 
      */
     emptyContentTable : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Emptying the content table");
+        ConnectionsToolbar.logger.info("Emptying the content table");
         var mDBConn = ConnectionsToolbar.database.openDatabase();
         var statement = mDBConn.createStatement("DELETE FROM toolbar_content");
         statement.executeAsync();

@@ -1,7 +1,8 @@
-<!ENTITY connections.recommendations.label                      "Recommendations">
+<!ENTITY connections.recommendations.label                      "Discover">
+<!ENTITY connections.following.label                            "I'm following">
 <!ENTITY connections.content.label                              "My Content">
 
-<!ENTITY connections.toolbarName.label                          "IBM Connections Toolbar">
+<!ENTITY connections.toolbarName.label                          "Connections toolbar">
 <!ENTITY connections.toolbar.accesskey                          "I">
 <!ENTITY connections.toolbar.configure                          "Configure">
 <!ENTITY connections.toolbar.configure.accesskey                "C">
@@ -21,6 +22,7 @@
 <!ENTITY connections.blogs.title                                "Blogs">
 <!ENTITY connections.dogear.title                               "Bookmarks">
 <!ENTITY connections.communities.title                          "Communities">
+<!ENTITY connections.directory.title                            "Directory">
 <!ENTITY connections.files.title                                "Files">
 <!ENTITY connections.forums.title                               "Forums">
 <!ENTITY connections.profiles.title                             "Profiles">
@@ -43,13 +45,13 @@
 <!ENTITY connections.dialog.access.username                     "User: ">
 <!ENTITY connections.dialog.access.password                     "Password: ">
 
-<!ENTITY connections.dialog.title                               "Configure IBM Connections toolbar">
+<!ENTITY connections.dialog.title                               "Configure Connections toolbar">
 <!ENTITY connections.dialog.settings.server.title               "Connections Settings">
 <!ENTITY connections.dialog.settings.components.title           "Component Settings">
 <!ENTITY connections.dialog.component.heading                   "Component">
 <!ENTITY connections.dialog.url.heading                         "URL">
 <!ENTITY connections.dialog.filter.heading                      "Filter">
-<!ENTITY connections.dialog.close                               "Close">
+<!ENTITY connections.dialog.close                               "Save &amp; Close">
 
 <!ENTITY connections.dialog.scheduler.description               "Configure how often the toolbar is updated">
 <!ENTITY connections.dialog.settings.scheduler.title            "Scheduler Settings">
@@ -57,11 +59,11 @@
 <!ENTITY connections.dialog.scheduler.hour                      "at:">
 <!ENTITY connections.dialog.scheduler                           "Scheduler">
 
-<!ENTITY connections.dialog.blogs.homepage.handle               "Handle for the Blogs homepage:">
-<!ENTITY connections.dialog.blogs                               "Blogs Homepage">
+<!ENTITY connections.dialog.use.tabs                            "Open content in a new tab">
 
 <!ENTITY connections.recommendations.bycomponent                "By Component">
 <!ENTITY connections.recommendations.norecommendations          "No Recommendations">
+<!ENTITY connections.following.nofollowing                      "No items followed">
 
 <!ENTITY connections.activities.nocontent                       "No Activities">
 <!ENTITY connections.blogs.nocontent                            "No Blogs">
@@ -87,3 +89,7 @@
 <!ENTITY connections.menu.files.donwnload.accesskey             "D">
 <!ENTITY connections.menu.copy.url                              "Copy the URL">
 <!ENTITY connections.menu.copy.url.accesskey                    "C">
+
+<!ENTITY connections.not.applicable                             "N/A">
+<!ENTITY connections.about                                      "About">
+<!ENTITY connections.about.accesskey                            "A">

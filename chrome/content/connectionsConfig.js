@@ -21,8 +21,8 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 ConnectionsToolbar.config = {
     autoConfigAttempted : false,
     serviceAvailable : false,
-    version : Application.prefs
-            .get("extensions.connections-toolbar.config.version").value,
+    version : ConnectionsToolbar.browserOverlay.prefService
+            .getCharPref("extensions.connections-toolbar.config.version"),
 
     /**
      * Enter description here...
@@ -32,18 +32,17 @@ ConnectionsToolbar.config = {
      *            ConnectionsToolbar.componentService.collateOptions()
      */
     refreshConfig : function(callback) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Resetting URLs");
+        ConnectionsToolbar.logger.info("Resetting URLs");
         for (name in ConnectionsToolbar.constants.ALL_COMPONENTS) {
-            component = ConnectionsToolbar.constants.ALL_COMPONENTS[name];
-            Application.prefs.setValue("extensions.connections-toolbar." + component + ".url", "");
-            Application.prefs.setValue("extensions.connections-toolbar." + component + ".enable", false);
+            var component = ConnectionsToolbar.constants.ALL_COMPONENTS[name];
+            ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar." + component + ".url", "");
+            ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar." + component + ".enable", false);
         }
         ConnectionsToolbar.config.autoConfigAttempted = false;
         ConnectionsToolbar.config.version = null;
-        var configURL = ConnectionsToolbar.preferences.searchURL + "/serviceconfigs";
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Performing Connections autoconfiguration: " + configURL);
+        var configURL = ConnectionsToolbar.preferences.searchURL
+                + "/serviceconfigs";
+        ConnectionsToolbar.logger.info("Performing Connections autoconfiguration: " + configURL);
         var xhReq = new XMLHttpRequest();
         xhReq.open("GET", configURL, true);
         xhReq.setRequestHeader("Cache-Control", "max-age=1");
@@ -55,15 +54,13 @@ ConnectionsToolbar.config = {
             ConnectionsToolbar.config.processResponse30(xhReq, callback);
             if (!ConnectionsToolbar.config.serviceAvailable) {
                 ConnectionsToolbar.logger
-                        .log(ConnectionsToolbar.constants.LOGGER.WARNING,
-                                "Connections config service not available, switching to Legacy mode.");
+                        .warn("Connections config service not available, switching to Legacy mode.");
                 ConnectionsToolbar.config.tryConnections25(callback);
             }
         };
         xhReq.onError = function() {
             ConnectionsToolbar.logger
-                    .log(ConnectionsToolbar.constants.LOGGER.WARNING,
-                            "Connections config service not available, switching to Legacy mode.");
+                    .warn("Connections config service not available, switching to Legacy mode.");
             // 2.5?
             ConnectionsToolbar.config.tryConnections25(callback);
         };
@@ -86,8 +83,7 @@ ConnectionsToolbar.config = {
 
             var configURL25 = ConnectionsToolbar.preferences.searchURL
                     + "/web/jsp/advancedSearch.jsp";
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                    "Performing Connections legacy autoconfiguration: "
+            ConnectionsToolbar.logger.info("Performing Connections legacy autoconfiguration: "
                             + configURL25);
             var xhReq = new XMLHttpRequest();
             xhReq.open("GET", configURL25, true);
@@ -100,8 +96,7 @@ ConnectionsToolbar.config = {
             };
             xhReq.onError = function() {
                 ConnectionsToolbar.logger
-                        .log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "Unable to perform Connections legacy autoconfiguration");
+                        .error("Unable to perform Connections legacy autoconfiguration");
                 ConnectionsToolbar.config.autoConfigAttempted = true;
             };
             xhReq.send();
@@ -133,8 +128,8 @@ ConnectionsToolbar.config = {
                                 .parseFragment(response.responseText, 0, false, null, body));
 
                 try {
-                    Application.prefs
-                            .get("extensions.connections-toolbar.search.url").value = ConnectionsToolbar.preferences.searchURL;
+                	ConnectionsToolbar.browserOverlay.prefService
+                			.setCharPref("extensions.connections-toolbar.search.url", ConnectionsToolbar.preferences.searchURL);
                 } catch (e) {
                 }
 
@@ -145,11 +140,13 @@ ConnectionsToolbar.config = {
                     if(typeof (wikiElement) != "undefined" && wikiElement != null) {
                         var URL = wikiElement.firstChild
                                 .getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.wikis.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.wikis.url", URL);
+                        ConnectionsToolbar.logger
+                        .info("The wikis URL variable is: " +URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.wikis.url").value = siteURL[0] + "/wikis";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.wikis.url", siteURL[0] + "/wikis");
+                        ConnectionsToolbar.logger
+                        .info("The wikis siteURL + /wikis is: " +siteURL[0] + "/wikis");
                     }
                 } catch (e) {
                 }
@@ -158,16 +155,13 @@ ConnectionsToolbar.config = {
                     var communityElement = responseXML.getElementById("lotusBannerCommunities");
                     if(typeof (communityElement) != "undefined" && communityElement != null) {
                         var URL = communityElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.communities.url").value = URL;
-                    } else if(Application.prefs
-                            .get("extensions.connections-toolbar.search.url")
-                            .value.indexOf("www.ibm.com/developerworks/mydeveloperworks") != -1) {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.communities.url").value = siteURL[0] + "/groups";
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.communities.url", URL);
+                    } else if(ConnectionsToolbar.browserOverlay.prefService
+                            .getCharPref("extensions.connections-toolbar.search.url")
+                            .indexOf("www.ibm.com/developerworks/mydeveloperworks") != -1) {
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.communities.url", siteURL[0] + "/groups");
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.communities.url").value = siteURL[0] + "/communities";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.communities.url", siteURL[0] + "/communities");
                     }
                 } catch (e) {
                 }
@@ -176,11 +170,9 @@ ConnectionsToolbar.config = {
                     var profileElement = responseXML.getElementById("lotusBannerProfiles");
                     if(typeof (profileElement) != "undefined" && profileElement != null) {
                         var URL = profileElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.profiles.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.profiles.url", URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.profiles.url").value = siteURL[0] + "/profiles";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.profiles.url", siteURL[0] + "/profiles");
                     }
                 } catch (e) {
                 }
@@ -189,11 +181,9 @@ ConnectionsToolbar.config = {
                     var activityElement = responseXML.getElementById("lotusBannerActivities");
                     if(typeof (activityElement) != "undefined" && activityElement != null) {
                         var URL = activityElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.activities.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.activities.url", URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.activities.url").value = siteURL[0] + "/activities";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.activities.url", siteURL[0] + "/activities");
                     }
                 } catch (e) {
                 }
@@ -202,11 +192,9 @@ ConnectionsToolbar.config = {
                     var homepageElement = responseXML.getElementById("lotusBannerHomepage");
                     if(typeof (homepageElement) != "undefined" && homepageElement != null) {
                         var URL = homepageElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.homepage.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.homepage.url", URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.homepage.url").value = siteURL[0] + "/homepage";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.homepage.url", siteURL[0] + "/homepage");
                     }
                 } catch (e) {
                 }
@@ -215,11 +203,9 @@ ConnectionsToolbar.config = {
                     var blogElement = responseXML.getElementById("lotusBannerBlogs");
                     if(typeof (blogElement) != "undefined" && blogElement != null) {
                         var URL = blogElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.blogs.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.blogs.url", URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.blogs.url").value = siteURL[0] + "/blogs";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.blogs.url", siteURL[0] + "/blogs");
                     }
                 } catch (e) {
                 }
@@ -228,11 +214,9 @@ ConnectionsToolbar.config = {
                     var fileElement = responseXML.getElementById("lotusBannerFiles");
                     if(typeof (fileElement) != "undefined" && fileElement != null) {
                         var URL = fileElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.files.url").value = URL;
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.files.url", URL);
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.files.url").value = siteURL[0] + "/files";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.files.url", siteURL[0] + "/files");
                     }
                 } catch (e) {
                 }
@@ -241,42 +225,34 @@ ConnectionsToolbar.config = {
                     var dogearElement = responseXML.getElementById("lotusBannerDoger");
                     if(typeof (dogearElement) != "undefined" && dogearElement != null) {
                         var URL = dogearElement.firstChild.getAttribute("href");
-                        Application.prefs
-                                .get("extensions.connections-toolbar.dogear.url").value = URL;
-                    } else if(Application.prefs
-                            .get("extensions.connections-toolbar.search.url")
-                            .value.indexOf("www.ibm.com/developerworks/mydeveloperworks") != -1) {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.dogear.url").value = siteURL[0] + "/bookmarks";
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.dogear.url", URL);
+                    } else if(ConnectionsToolbar.browserOverlay.prefService
+                            .getCharPref("extensions.connections-toolbar.search.url")
+                            .indexOf("www.ibm.com/developerworks/mydeveloperworks") != -1) {
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.dogear.url", siteURL[0] + "/bookmarks");
                     } else {
-                        Application.prefs
-                                .get("extensions.connections-toolbar.dogear.url").value = siteURL[0] + "/dogear";
+                    	ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.dogear.url", siteURL[0] + "/dogear");
                     }
                 } catch (e) {
                 }
 
                 ConnectionsToolbar.config.serviceAvailable = true;
                 ConnectionsToolbar.config.version = "2.5";
-                Application.prefs
-                    .get("extensions.connections-toolbar.config.version").value = ConnectionsToolbar.config.version;
+                ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.config.version",
+                		ConnectionsToolbar.config.version);
 
                 ConnectionsToolbar.config.autoConfigAttempted = true;
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "Connections legacy autoconfiguration complete");
+                ConnectionsToolbar.logger.info("Connections legacy autoconfiguration complete");
                 callback();
             } catch (e) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                        e);
+                ConnectionsToolbar.logger.error(e);
                 ConnectionsToolbar.config.autoConfigAttempted = true;
                 ConnectionsToolbar.logger
-                        .log(
-                                ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "An error occurred while processing response data from Connections legacy autoconfiguration");
+                        .error("An error occurred while processing response data from Connections legacy autoconfiguration");
             }
         } else {
             ConnectionsToolbar.logger
-                    .log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                            "No response data from Connections legacy autoconfiguration");
+                    .error("No response data from Connections legacy autoconfiguration");
         }
     },
 
@@ -301,9 +277,8 @@ ConnectionsToolbar.config = {
                 for (var i = 0; i < generatorNodes.length; i++) {
                     var version = generatorNodes[i].getAttribute("version");
                     ConnectionsToolbar.config.version = version.substring(0,3);
-                    Application.prefs
-                            .get("extensions.connections-toolbar.config.version").value
-                                    = ConnectionsToolbar.config.version;
+                    ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.config.version",
+                            ConnectionsToolbar.config.version);
                 }
                         
                 var entries = feedNode.getElementsByTagName("entry");
@@ -313,61 +288,34 @@ ConnectionsToolbar.config = {
                     var titleElement = entry.getElementsByTagName("title")[0];
                     var title = titleElement.firstChild.nodeValue;
                     if(ConnectionsToolbar.config.contains(title)) {
-                        // window.alert(title);
                         var URLElement = entry.getElementsByTagName("link")[0];
                         var URL = URLElement.getAttribute("href");
-                        // window.alert(URL);
-                        var pref = Application.prefs.get("extensions.connections-toolbar." + title + ".url");
-                        if (pref){
-                            pref.value = URL;
-                        }
+                        URL = URL.replace(/^http:\/\//i, 'https://');
+                        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar." + title + ".url", URL);
                     }
                 }
 
                 ConnectionsToolbar.config.autoConfigAttempted = true;
                 ConnectionsToolbar.config.serviceAvailable = true;
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "Connections autoconfiguration complete. Version is "+ConnectionsToolbar.config.version+".");
+                ConnectionsToolbar.logger.info("Connections autoconfiguration complete. Version is " + ConnectionsToolbar.config.version + ".");
                 callback();
             } catch (e) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                        e);
+                ConnectionsToolbar.logger.error(e);
                 ConnectionsToolbar.logger
-                        .log(
-                                ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "An error occurred while processing response data from Connections autoconfiguration");
+                        .error("An error occurred while processing response data from Connections autoconfiguration");
             }
         } else {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.WARNING,
-                    "No response data from Connections autoconfiguration");
+            ConnectionsToolbar.logger.warn("No response data from Connections autoconfiguration");
         }
     },
 
     contains : function(string) {
         for (name in ConnectionsToolbar.constants.ALL_COMPONENTS) {
-            component = ConnectionsToolbar.constants.ALL_COMPONENTS[name];
+            var component = ConnectionsToolbar.constants.ALL_COMPONENTS[name];
             if(component == string) {
                 return true;
             }
         }
         return false;
-    },
-
-    getComponentURL : function(componentName) {
-        var componentURL = null;
-        try {
-            componentURL = Application.prefs
-                    .get("extensions.connections-toolbar." + componentName
-                            + ".url").value;
-            if (typeof (componentURL) == "undefined" || componentURL == "") {
-                componentURL = null;
-            }
-        } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                    "Unable to get component url for: " + component);
-            componentURL = null;
-        }
-        return componentURL;
     }
 };

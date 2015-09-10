@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -29,24 +29,36 @@ ConnectionsToolbar.logger = {
     consoleService : null,
     loggingEnabled : false,
     init : function() {
-        ConnectionsToolbar.preferences.loggingEnabled = Application.prefs
-                .get("extensions.connections-toolbar.logging.enabled").value;
+        ConnectionsToolbar.preferences.loggingEnabled = ConnectionsToolbar.browserOverlay.prefService
+                .getBoolPref("extensions.connections-toolbar.logging.enable");
         ConnectionsToolbar.preferences.updateLoggingMenuOption();
-        ConnectionsToolbar.logger.loggingEnabled = Application.prefs
-                .get("extensions.connections-toolbar.logging.enabled").value;
+        ConnectionsToolbar.logger.loggingEnabled = ConnectionsToolbar.browserOverlay.prefService
+        .getBoolPref("extensions.connections-toolbar.logging.enable");
         if (ConnectionsToolbar.logger.loggingEnabled) {
-            if (ConnectionsToolbar.logger.consoleService == null) {
-                ConnectionsToolbar.logger.consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                        .getService(Components.interfaces.nsIConsoleService);
+            Components.utils.import("resource://gre/modules/devtools/Console.jsm");
+            var devtools = Components.utils.import("resource://gre/modules/devtools/Loader.jsm", {}).devtools;
+            var HUDService = devtools.require("devtools/webconsole/hudservice");
+            if(HUDService.getBrowserConsole()) {
+                HUDService.getBrowserConsole().chromeWindow.focus();
+            } else {
+                HUDService.toggleBrowserConsole();
             }
-            toJavaScriptConsole();
         }
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Logging initialized");
+        ConnectionsToolbar.logger.info("Logging initialized");
     },
-    log : function(levelString, logString) {
+    error : function(logString) {
         if (ConnectionsToolbar.logger.loggingEnabled) {
-            ConnectionsToolbar.logger.consoleService.logStringMessage("ConnectionsToolbar - "
-                    + levelString + ": " + logString);
+            console.error("ConnectionsToolbar", logString);
+        }
+    },
+    warn : function(logString) {
+        if (ConnectionsToolbar.logger.loggingEnabled) {
+            console.warn("ConnectionsToolbar", logString);
+        }
+    },
+    info : function(logString) {
+        if (ConnectionsToolbar.logger.loggingEnabled) {
+            console.info("ConnectionsToolbar", logString);
         }
     }
 };

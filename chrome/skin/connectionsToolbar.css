@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * Â© Copyright IBM Corp. 2011, 2013
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -84,13 +84,14 @@
     list-style-image: url("chrome://connections-toolbar/skin/images/53-house.png");
 }
 
-.connections-recommendations, .connections-recommendations[type="menu"],
+/*.connections-recommendations, .connections-recommendations[type="menu"],
         toolbar[iconsize="small"] .connections-recommendations,
         toolbar[iconsize="small"] .connections-recommendations[type="menu"] {
     list-style-image: url("chrome://connections-toolbar/skin/images/28-star.png");
-}
+}*/
 
 .connections-settings:not([type="menu-button"]),
+        .connections-settings, .connections-settings[type="menu"],
         toolbar[iconsize="small"] .connections-settings:not([type="menu-button"]) {
     list-style-image: url("chrome://connections-toolbar/skin/images/20-gear2.png");
 }
@@ -171,43 +172,65 @@
     list-style-image: url("chrome://connections-toolbar/skin/file-icons/page_white.png");
 }
 
-.connections-all-list-item {
+.connections-all-list-item,
+.connections-all-list-item .toolbarbutton-menubutton-button,
+.connections-all-list-item .toolbarbutton-menubutton-button .toolbarbutton-icon {
+    height: 16px;
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/55-network.png");
 }
 
-.connections-activities-list-item {
+.connections-activities-list-item,
+.connections-activities-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/36-toolbox.png");
 }
 
-.connections-blogs-list-item {
+.connections-blogs-list-item,
+.connections-blogs-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/179-notepad.png");
 }
 
-.connections-dogear-list-item {
+.connections-dogear-list-item,
+.connections-dogear-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/58-bookmark.png");
 }
 
-.connections-communities-list-item {
+.connections-communities-list-item,
+.connections-communities-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/112-group.png");
 }
 
-.connections-files-list-item {
+.connections-files-list-item,
+.connections-files-list-item .toolbarbutton-menubutton-button {
+	border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/33-cabinet.png");
 }
 
-.connections-forums-list-item {
+.connections-forums-list-item,
+.connections-forums-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/09-chat-2.png");
 }
 
-.connections-profiles-list-item {
+.connections-directory-list-item, .connections-profiles-list-item,
+.connections-profiles-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/111-user.png");
 }
 
-.connections-wikis-list-item {
+.connections-wikis-list-item,
+.connections-wikis-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/96-book.png");
 }
 
-.connections-status_updates-list-item {
+.connections-status_updates-list-item,
+.connections-status_updates-list-item .toolbarbutton-menubutton-button {
+    border: none;
     list-style-image: url("chrome://connections-toolbar/skin/images/08-chat.png");
 }
 
@@ -264,6 +287,6 @@ image.connections-component-config-image{
 }
 
 .connections-pref-window {
-    width: 400px;
+    width: 500px;
     height: 550px;
 }

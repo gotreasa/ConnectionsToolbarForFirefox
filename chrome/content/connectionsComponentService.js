@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -25,24 +25,52 @@ ConnectionsToolbar.componentService = {
     ready : false,
 
     refreshComponentService : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Refreshing component service.");
+        ConnectionsToolbar.logger.info("Refreshing component service.");
         ConnectionsToolbar.componentService.ready = false;
-        ConnectionsToolbar.componentService.componentRecommendationsCount = null;
         ConnectionsToolbar.componentService.componentContentCount = null;
 
         if (ConnectionsToolbar.componentService.componentContentContexts == null) {
             ConnectionsToolbar.componentService.componentContentContexts = new Array();
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/service/atom/communities/my?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/service/atom2/activities?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/"
-                    + Application.prefs.get("extensions.connections-toolbar.blogs.homepage").value
-                    +"/api/blogs?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.DOGEAR] = "/atom/mybookmarks?ps=";
-            // TODO: figure out which forums URL we should be using
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/atom/topics/my?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.FILES] = "/basic/api/myuserlibrary/feed?pageSize=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/form/api/mywikis/feed?pageSize=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT] = new Array();
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/service/atom/communities/my?ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/service/atom2/activities?ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/home/api/blogs?ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.DOGEAR] = "/atom/mybookmarks?ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/atom/topics/my?ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/basic/api/myuserlibrary/feed?pageSize=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/form/api/mywikis/feed?pageSize=";
+
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING] = new Array();
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/follow/atom/resources?source=communities&type=community&ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/follow/atom/resources?source=activities&type=activity&ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/follow/atom/resources?source=blogs&type=blog&ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/follow/atom/resources?source=forums&type=forum_topic&ps=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/follow/atom/resources?source=files&type=file&pageSize=";
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/follow/atom/resources?source=wikis&type=wiki&pageSize=";
+
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS] = new Array();
+            var searchURL = ConnectionsToolbar.componentService.getComponentURL("search");
+
+            var recommendUrl = searchURL + "/atom/social/recommend";
+            var defaultParams = "diversityboost=1.0f&dateboost=1.0f&randomize=true&pageSize=";
+
+            for (var name in ConnectionsToolbar.constants.COMPONENTS) {
+                var component = ConnectionsToolbar.constants.COMPONENTS[name];
+
+                if (component==="communities"){
+                        source = new Array("Source/communities/entry");
+                } else {
+                        source = new Array("Source/" + component);
+                }
+
+                var constraint = {type: "category", values: source};
+                ConnectionsToolbar.logger.info("The component is " + JSON.stringify(constraint));
+                ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS][component] = recommendUrl
+                        + "?constraint="
+                        + JSON.stringify(constraint)
+                        + "&"
+                        + defaultParams;
+            }
         }
 
         ConnectionsToolbar.preferences.refreshPreferences();
@@ -54,88 +82,79 @@ ConnectionsToolbar.componentService = {
             return;
         }
 
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Collating available components");
+        ConnectionsToolbar.logger.info("Collating available components");
 
         var service = ConnectionsToolbar.componentService;
 
-        service.componentRecommendationsCount = new Array();
         service.componentContentCount = new Array();
+        for (value in ConnectionsToolbar.constants.DATA_TYPE) {
+            var type = ConnectionsToolbar.constants.DATA_TYPE[value];
+            service.componentContentCount[type] = new Array();
+        }
 
-        ConnectionsToolbar.config.getComponentURL("search");
-        Application.prefs.get("extensions.connections-toolbar.search.enable").value = !(ConnectionsToolbar.componentService.getComponentURL("search") == null);
-
-        service.componentRecommendationsCount["allConnections"] = ConnectionsToolbar.preferences
-                .getComponentRecommendationsCount("allConnections");
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.search.enable",
+        		!(ConnectionsToolbar.componentService.getComponentURL("search") == null));
 
         for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
+            var component = ConnectionsToolbar.constants.COMPONENTS[name];
 
-            ConnectionsToolbar.config.getComponentURL(component);
-            Application.prefs.get("extensions.connections-toolbar." + component + ".enable").value = !(ConnectionsToolbar.componentService.getComponentURL(component) == null);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "The " + component + " URL is " +
-                    Application.prefs.get("extensions.connections-toolbar." + component + ".url").value);
-            service.componentRecommendationsCount[component] = ConnectionsToolbar.preferences
-                    .getComponentRecommendationsCount(component);
-            service.componentContentCount[component] = ConnectionsToolbar.preferences
-                    .getComponentContentCount(component);
+            ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar." + component + ".enable",
+            		!(ConnectionsToolbar.componentService.getComponentURL(component) == null));
+            ConnectionsToolbar.logger.info("The "
+                            + component
+                            + " URL is "
+                            + ConnectionsToolbar.browserOverlay.prefService
+                                    .getCharPref("extensions.connections-toolbar."
+                                            + component + ".url"));
+
+            for (value in ConnectionsToolbar.constants.DATA_TYPE) {
+                var type = ConnectionsToolbar.constants.DATA_TYPE[value];
+                service.componentContentCount[type][component] = ConnectionsToolbar.preferences
+                        .getComponentContentCount(component, type);
+            }
         }
 
-        ConnectionsToolbar.config.getComponentURL("profiles");
-        Application.prefs.get("extensions.connections-toolbar.profiles.enable").value = !(ConnectionsToolbar.componentService.getComponentURL("profiles") == null);
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.profiles.enable",
+        		!(ConnectionsToolbar.componentService.getComponentURL("profiles") == null));
 
-        ConnectionsToolbar.config.getComponentURL("homepage");
-        Application.prefs.get("extensions.connections-toolbar.homepage.enable").value = !(ConnectionsToolbar.componentService.getComponentURL("homepage") == null);
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.homepage.enable",
+        		!(ConnectionsToolbar.componentService.getComponentURL("homepage") == null));
 
-        ConnectionsToolbar.config.getComponentURL("hot");
-        if (Application.prefs.get("extensions.connections-toolbar.hot.url").value == null
-                || Application.prefs.get("extensions.connections-toolbar.hot.url").value == "") {
-            Application.prefs.get("extensions.connections-toolbar.hot.url").value = Application.prefs.get("extensions.connections-toolbar.hot.url").reset();
+        if (ConnectionsToolbar.browserOverlay.prefService.getCharPref("extensions.connections-toolbar.hot.url") == null
+                || ConnectionsToolbar.browserOverlay.prefService.getCharPref("extensions.connections-toolbar.hot.url") == "") {
+        	ConnectionsToolbar.browserOverlay.prefService.clearUserPref("extensions.connections-toolbar.hot.url");
         }
-        Application.prefs.get("extensions.connections-toolbar.hot.enable").value = !(ConnectionsToolbar.componentService.getComponentURL("hot") == null);
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.hot.enable",
+        		!(ConnectionsToolbar.componentService.getComponentURL("hot") == null));
 
         service.ready = true;
 
-        ConnectionsToolbar.browserOverlay.repaint(ConnectionsToolbar.browserOverlay.getContentAndRecommendations);
+        ConnectionsToolbar.browserOverlay.repaint(ConnectionsToolbar.browserOverlay.getAllContent);
     },
 
-    isComponentEnabled : function(componentName) {
+    isComponentEnabled : function(component) {
         var enabled = false;
         try {
-            enabled = Application.prefs.get("extensions.connections-toolbar." + component + ".enable").value;
+            enabled = ConnectionsToolbar.browserOverlay.prefService.getBoolPref("extensions.connections-toolbar." + component + ".enable");
             if (typeof (enabled) == "undefined") {
                 enabled = false;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
+            ConnectionsToolbar.logger.error( e);
             enabled = false;
         }
         return enabled;
     },
 
-    getComponentContentCount : function(componentName) {
+    getComponentContentCount : function(componentName, type) {
         var count = 0;
         try {
-            count = ConnectionsToolbar.componentService.componentContentCount[componentName];
+            count = ConnectionsToolbar.componentService.componentContentCount[type][componentName];
             if (typeof (count) == "undefined") {
                 count = 0;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            count = 0;
-        }
-        return count;
-    },
-
-    getComponentRecommendationsCount : function(componentName) {
-        var count = 0;
-        try {
-            count = ConnectionsToolbar.componentService.componentRecommendationsCount[componentName];
-            if (typeof (count) == "undefined") {
-                count = 0;
-            }
-        } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
+            ConnectionsToolbar.logger.error(e);
             count = 0;
         }
         return count;
@@ -144,54 +163,77 @@ ConnectionsToolbar.componentService = {
     getComponentURL : function(componentName) {
         var componentURL = null;
         try {
-            componentURL = Application.prefs.get("extensions.connections-toolbar." + componentName + ".url").value;
+            componentURL = ConnectionsToolbar.browserOverlay.prefService.getCharPref("extensions.connections-toolbar." + componentName + ".url");
             if (typeof (componentURL) == "undefined" || componentURL == "") {
                 componentURL = null;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
+            ConnectionsToolbar.logger.error( e);
             componentURL = null;
         }
         return componentURL;
     },
 
-    getComponentContentContext : function(componentName) {
+    getComponentContentContext : function(componentName, type) {
         var componentContentContext = null;
         try {
-            componentContentContext = ConnectionsToolbar.componentService.componentContentContexts[componentName];
+            componentContentContext = ConnectionsToolbar.componentService.componentContentContexts[type][componentName];
             if (typeof (componentContentContext) == "undefined"
                     || componentContentContext == "") {
                 componentContentContext = null;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
+            ConnectionsToolbar.logger.error(e);
             componentContentContext = null;
         }
         return componentContentContext;
     },
-
+    
     bookmarkThis : function(event) {
-        var location = encodeURIComponent(window.content.document.location);
-        var title = encodeURIComponent(window.content.document.title);
-        if (title != "" && location != "about:blank") {
-            var bookmarkURL;
-            if(ConnectionsToolbar.config.version >= "4.0") {
-                bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("bookmarklet")
-                        + "/post?url=" + location + "&title=" + title;
-            } else {
-                bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("dogear")
-                        + "/bookmarklet/post?url=" + location + "&title=" + title;
-            }
-            var bookmarkDlg = window
-                    .openDialog("about:blank", "",
-                            "toolbars=no,scrollbars=yes,resizable=yes,width=760,height=500,centerscreen");
-            bookmarkDlg.location.href = bookmarkURL;
+        ConnectionsToolbar.browserOverlay.doNothing(event);
+        var bookmarkURL;
+        if(ConnectionsToolbar.config.version >= "4.0") {
+            bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("bookmarklet");
+        } else {
+            bookmarkURL = ConnectionsToolbar.componentService.getComponentURL("dogear")
+                    + "/bookmarklet";
+        }
+        
+        var d = window.content.document;
+//        var b = d.body;
+        var dw;
+
+        if (d.title != "" && d.title != "undefined"
+            && d.location != "about:blank" && d.location != "about:newtab") {
+//            if (b) {
+//                var script = d.createElement('script');
+//                script.charset = 'UTF-8';
+//                script.ver = '4.5';
+//                script.src = bookmarkURL + '/tools/blet.js';
+//                b.appendChild(script);
+//            }
+            setTimeout(
+                    function() {
+                        var url = d.getElementById('dogear_postUrl');
+
+                        if (url && url.href) {
+                            url = url.href;
+                        } else {
+                            url = bookmarkURL + '/post?url=' + encodeURIComponent(d.location) + '&title='
+                                    + encodeURIComponent(d.title);
+                        }
+                        dw = window
+                            .openDialog("about:blank", "",
+                                  "toolbars=no,scrollbars=yes,resizable=yes,width=760,height=560,centerscreen");
+                        dw.location.href = url;
+                        if (!(dw == null || typeof (dw) == 'undefined')) {
+                            dw.focus();
+                        }
+                    }, 250);
         } else {
             alert(ConnectionsToolbar.NLS.get("connections.dogear.nourl"));
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.WARNING,
-                    "No URL for bookmark.");
+            ConnectionsToolbar.logger.warn("No URL for bookmark.");
         }
-        ConnectionsToolbar.browserOverlay.doNothing(event);
     },
 
     createEntry : function(componentID, event, target) {
@@ -247,7 +289,7 @@ ConnectionsToolbar.componentService = {
             } else {
                 id = "com_ibm_social_layout_widget_ActionBar_0";
             }
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Files ID: " + id);
+            ConnectionsToolbar.logger.info("Files ID: " + id);
             var content = ConnectionsToolbar.browserOverlay.gotoURL(ConnectionsToolbar.componentService
                     .getComponentURL(componentID), event, target, 
                     ConnectionsToolbar.componentService.onLoadClickButton, id);
@@ -263,9 +305,10 @@ ConnectionsToolbar.componentService = {
         if (i >= 0
                 && ("undefined" === typeof(content.document)
                 || content.document.getElementById(buttonId) == null)) {
-            setTimeout(function() {
-            			ConnectionsToolbar.componentService.clickButton();
-            		}, 1000, [--i, buttonId, content, callee]);
+            setTimeout(function(i, buttonId, content, callee) {
+            	ConnectionsToolbar.componentService.clickButton((--i), buttonId, content, callee);
+            },
+            		 1000);
         } else if ("undefined" !== typeof(content.document)) {
             content.document.body
                     .removeEventListener("load", callee, true);
@@ -280,20 +323,22 @@ ConnectionsToolbar.componentService = {
     },
 
     onLoadClickButton : function(buttonId, content) {
-        gBrowser.addEventListener(
-                "DOMContentLoaded",
-                function() {
-                    content.document.body
-                            .addEventListener("load", function() {
-                                ConnectionsToolbar.componentService.clickButton(10,
-                                        buttonId, content, arguments.callee);
-                            }, true);
-                    gBrowser.removeEventListener("DOMContentLoaded",
-                            arguments.callee, false);
-                }, false);
-        if(buttonId === "com_ibm_social_layout_widget_ActionBar_0") {
-            ConnectionsToolbar.componentService.clickButton(10, buttonId,
-                    content, arguments.callee);
-        }
+        this.onLoad = function() {
+            gBrowser.addEventListener(
+                    "DOMContentLoaded",
+                    function() {
+                        content.document.body
+                                .addEventListener("load", function() {
+                                    ConnectionsToolbar.componentService.clickButton(10,
+                                            buttonId, content, arguments.callee);
+                                }, true);
+                        gBrowser.removeEventListener("DOMContentLoaded",
+                                arguments.callee, false);
+                    }, false);
+            if(buttonId === "com_ibm_social_layout_widget_ActionBar_0") {
+                ConnectionsToolbar.componentService.clickButton(10, buttonId,
+                        content, arguments.callee);
+            }
+        };
     }
 };
