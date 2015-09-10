@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,7 +19,7 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 };
 
 ConnectionsToolbar.menuUtils = {
-    createMenuItem : function(aLabel, aComponent, favicon, url, downloadUrl) {
+    createMenuItem : function(aLabel, aComponent, type, favicon, url, downloadUrl) {
         const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
         // create a new XUL menuitem
         var item = document.createElementNS(XUL_NS, "menuitem");
@@ -51,7 +51,9 @@ ConnectionsToolbar.menuUtils = {
                 var iconClass = " "
                         + ConnectionsToolbar.fileIcons.getClassForFile(aLabel);
                 item.className += iconClass;
-                item.setAttribute("downloadUrl", downloadUrl);
+                if (type === ConnectionsToolbar.constants.DATA_TYPE.CONTENT) {
+                    item.setAttribute("downloadUrl", downloadUrl);
+                }
             }
         }
         return item;
@@ -70,16 +72,16 @@ ConnectionsToolbar.menuUtils = {
     },
 
     clearAllMenus : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Clearing all the menus");
+        ConnectionsToolbar.logger.info("Clearing all the menus");
         for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
+            var component = ConnectionsToolbar.constants.COMPONENTS[name];
 
-            ConnectionsToolbar.menuUtils.clearPopup("my-" + component + "-popup");
-            ConnectionsToolbar.menuUtils.clearPopup("recommendations-" + component + "-popup");
-            ConnectionsToolbar.menuUtils.clearPopup("recommendations-" + component + "-collective-popup");
+            for (value in ConnectionsToolbar.constants.DATA_TYPE) {
+                var type = ConnectionsToolbar.constants.DATA_TYPE[value];
+                
+                ConnectionsToolbar.menuUtils.clearPopup(type + "-" + component + "-popup");
+            }
         }
-        ConnectionsToolbar.menuUtils.clearPopup("recommendations-allConnections-popup");
     },
     
     clearPopup : function(popupID) {
@@ -100,37 +102,20 @@ ConnectionsToolbar.menuUtils = {
     },
 
     showPlaceholder : function(node, type, component) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Showing the placeholder for: " + component);
+        ConnectionsToolbar.logger.info("Showing the placeholder for: "
+                + component);
         const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
         // create a new XUL menuitem
         var item = document.createElementNS(XUL_NS, "menuitem");
         item.setAttribute("type", "placeholdeer");
-        if(type == "recommendations") {
+        ConnectionsToolbar.logger.info("type: " + type);
+        if(type == ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
             item.setAttribute("label", ConnectionsToolbar.NLS.get("connections.recommendations.norecommendations"));
-        } else if(type == "content")
-        item.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".nocontent"));
-        node.appendChild(item);
-    },
-
-    synchronizeMenus : function(sourceMenu, destinationMenu) {
-        if (destinationMenu != null && sourceMenu != null) {
-            // ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Synchronising
-            // the Recommendations");
-            ConnectionsToolbar.menuUtils.clearMenu(destinationMenu);
-            var count = 0;
-            if (sourceMenu.hasChildNodes()) {
-                var menuOptions = sourceMenu.childNodes;
-                for ( var i = 0; i < menuOptions.length; i++) {
-                    if (menuOptions[i].getAttribute("type") != "placeholder") {
-                        count++;
-                        destinationMenu.appendChild(menuOptions[i]
-                                .cloneNode(true));
-                    }
-                }
-            }
-            if (count > 0) {
-                ConnectionsToolbar.menuUtils.hidePlaceholder(destinationMenu);
-            }
+        } else if(type == ConnectionsToolbar.constants.DATA_TYPE.CONTENT) {
+            item.setAttribute("label", ConnectionsToolbar.NLS.get("connections." + component + ".nocontent"));
+        } else if(type == ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING) {
+            item.setAttribute("label", ConnectionsToolbar.NLS.get("connections.following.nofollowing"));
         }
+        node.appendChild(item);
     }
 };

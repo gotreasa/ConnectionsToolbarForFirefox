@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -46,16 +46,21 @@
         <replace dir="${build.dir}" includes="*.rdf" token="@toolbar.version@" value="${toolbar.version}" />
         <replace dir="${build.dir}" includes="*.rdf" token="em:minVersion=&quot;10.0&quot;" value="em:minVersion=&quot;${firefox.version.min}&quot;" />
         <replace dir="${build.dir}" includes="*.rdf" token="em:maxVersion=&quot;20.0&quot;" value="em:maxVersion=&quot;${firefox.version.max}&quot;" />
+        <replace dir="${build.dir}" includes="*.rdf" token="10.0.0.0.0" value="${firefox.version.min}" />
+        <replace dir="${build.dir}" includes="*.rdf" token="999.1.1" value="${firefox.version.max}" />
         <replace file="${build.dir}/install.rdf" token="@update.url@" value="${update.url}" />
         <replace file="${build.dir}/chrome/content/browserOverlay.js" token="@blog.url.base@" value="${blog.url.base}" />
         <replace file="${build.dir}/chrome/content/browserOverlay.js" token="@blog.url.entry@" value="${blog.url.entry}" />
-        <zip destfile="${build.dir}/connections-toolbar${toolbar.version}.xpi" basedir="${build.dir}" encoding="UTF-8" excludes="*">
+        <zip destfile="${build.dir}/output/connections-toolbar${toolbar.version}.xpi" basedir="${build.dir}" encoding="UTF-8" excludes="*">
             <fileset file="${build.dir}/chrome.manifest" />
             <fileset file="${build.dir}/install.rdf" />
             <fileset file="${build.dir}/LICENSE" />
             <fileset file="${build.dir}/NOTICE" />
         </zip>
-        <checksum file="${build.dir}/connections-toolbar${toolbar.version}.xpi" algorithm="SHA-256" property="checksum.value" />
+        <checksum file="${build.dir}/output/connections-toolbar${toolbar.version}.xpi" algorithm="SHA-256" property="checksum.value" />
         <replace file="${build.dir}/${update.file.name}" token="@CHECKSUM@" value="${checksum.value}" />
+        <copy todir="${build.dir}/output">
+                    <fileset file="${build.dir}/${update.file.name}" />
+        </copy>
     </target>
 </project>

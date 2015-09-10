@@ -1,17 +1,17 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at:
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 if ("undefined" == typeof (ConnectionsToolbar)) {
@@ -31,19 +31,31 @@ ConnectionsToolbar.access = {
     },
 
     getLoginInfo : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Fetching login credentials.");
+        ConnectionsToolbar.logger.info("Fetching login credentials.");
+        if (ConnectionsToolbar.access.loginManager === null 
+                || typeof(ConnectionsToolbar.access.loginManager) == "undefined") {
+            ConnectionsToolbar.access.init();
+            ConnectionsToolbar.logger.error("The Login Manger was null.");
+
+            if (ConnectionsToolbar.access.loginManager === null 
+                    || typeof(ConnectionsToolbar.access.loginManager) == "undefined") {
+                ConnectionsToolbar.logger.error("The Login Manger couldn't be retrieved.");
+            } else {
+                ConnectionsToolbar.logger.info("The Login Manger was retrieved.");
+            }
+        } else {
+            ConnectionsToolbar.logger.info("The Login Manger is setup.");
+        }
         var logins = ConnectionsToolbar.access.loginManager.findLogins({},
                 ConnectionsToolbar.access.url, null,
                 ConnectionsToolbar.access.httpRealm);
 
         var loginInfo = null;
         // Find user from returned array of nsILoginInfo objects
-        if (logins.length > 0) {
+        if (typeof(logins) !== "undefined" && logins !== null && logins.length > 0) {
             loginInfo = logins[0];
         } else {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.WARNING,
-                    "No login credentials found.");
+            ConnectionsToolbar.logger.warn("No login credentials found.");
         }
         return loginInfo;
     },
@@ -59,32 +71,49 @@ ConnectionsToolbar.access = {
     },
 
     /**
-     * Enter description here...
+     * Login in to Connections
      * 
      * @param function
      *            callback -
-     *            ConnectionsToolbar.browserOverlay.getContentAndRecommendations()
+     *            ConnectionsToolbar.browserOverlay.getAllContent()
      */
     login : function(callback) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Attempting to log you in");
+        ConnectionsToolbar.logger.info("Attempting to log you in");
         var xhReq = new XMLHttpRequest();
-        var loginURL = Application.prefs
-                .get("extensions.connections-toolbar.search.url").value
-                + "/j_security_check/";
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Logging into Connections - " + loginURL);
+        var loginURL = ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.files.url")
+                + "/basic/api/introspection";
+        ConnectionsToolbar.logger.info("Logging into Connections - " + loginURL);
         var loginInfo = ConnectionsToolbar.access.getLoginInfo();
-        var params = loginInfo.usernameField
-                + "=" + encodeURIComponent(loginInfo.username) + "&"
-                + loginInfo.passwordField + "="
-                + encodeURIComponent(loginInfo.password)
-                + "&secure=&fragment=";
-        params = params.replace("%20", "+");
-        xhReq.open("POST", loginURL, true);
 
-        xhReq.setRequestHeader("Content-type",
-                "application/x-www-form-urlencoded");
+        var isEmptyCredentials = false;
+        if (loginInfo) {
+            if (!(typeof(loginInfo.username) !== "undefined"
+                    && loginInfo.username !== null)) {
+                ConnectionsToolbar.logger.warn("The username is not loaded correctly");
+                isEmptyCredentials = true;
+            }
+            if (!(typeof(loginInfo.password) !== "undefined"
+                    && loginInfo.password !== null)) {
+                ConnectionsToolbar.logger.warn("The password is not loaded correctly");
+                isEmptyCredentials = true;
+            }
+        } else {
+            isEmptyCredentials = true;
+        }
+        if(isEmptyCredentials) {
+            ConnectionsToolbar.logger.warn("Could not load the toolbar due to missing credentials");
+            return;
+        }
+        
+        var credentials = loginInfo.username + ":"
+                + loginInfo.password;
+        var base64Credentials = window.btoa(credentials);
+        
+        xhReq.open("GET", loginURL, true);
+        
         xhReq.setRequestHeader("User-Agent", "connections-toolbar");
+        xhReq.setRequestHeader("Authorization", "Basic " + base64Credentials);
         xhReq.setRequestHeader("Connection", "close");
 
         xhReq.onreadystatechange = function() {
@@ -95,127 +124,96 @@ ConnectionsToolbar.access = {
             try {
                 ConnectionsToolbar.access.processResponse(xhReq, callback);
             } catch (e) {
-                ConnectionsToolbar.logger.log(
-                        ConnectionsToolbar.constants.LOGGER.ERROR, e);
+                ConnectionsToolbar.logger.error(e);
                 ConnectionsToolbar.logger
-                        .log(
-                                ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "Unable to log into ConnectionsToolbar.  Please verify Connections host and network connectivity.");
+                        .error("Unable to log into ConnectionsToolbar.  Please verify Connections host and network connectivity.");
                 ConnectionsToolbar.access.processError(callback);
             }
         };
 
         xhReq.onError = function() {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                    e);
+            ConnectionsToolbar.logger.error(e);
             ConnectionsToolbar.logger
-                    .log(
-                            ConnectionsToolbar.constants.LOGGER.ERROR,
-                            "Unable to log into ConnectionsToolbar.  Please verify Connections host and network connectivity.");
+                    .error("Unable to log into ConnectionsToolbar.  Please verify Connections host and network connectivity.");
             ConnectionsToolbar.access.processError();
         };
 
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Attempting to connect...");
-        xhReq.send(params);
+        ConnectionsToolbar.logger.info("Attempting to connect...");
+        xhReq.send();
         ConnectionsToolbar.scheduler.runLogin = false;
     },
 
     /**
-     * Enter description here...
+     * Processes the response from the Connections login request
      * 
      * @param function
      *            callback -
-     *            ConnectionsToolbar.browserOverlay.getContentAndRecommendations()
+     *            ConnectionsToolbar.browserOverlay.getAllContent()
      */
     processResponse : function(xhReq, callback) {
-        var responseHeaders = xhReq.getAllResponseHeaders();
-        var headers = responseHeaders.split("\n");
-        var found = false;
-        ConnectionsToolbar.access.loggedIn = false;
-        ConnectionsToolbar.access.invalidLoginCredentials = false;
-        for ( var i = 0; i < headers.length && !found; i++) {
-            var header = headers[i].split(": ");
-            var headerName = header[0];
-            var headerValue = header[1];
-            if (headerName.indexOf("X-LConn-Auth") !== -1) {
-                found = true;
-                if (headerValue.indexOf("true") !== -1) {
-                    ConnectionsToolbar.access.loggedIn = true;
-                } else if (headerValue.indexOf("false") !== -1) {
-                    ConnectionsToolbar.access.invalidLoginCredentials = true;
-                }
-            }
-        }
-        if (ConnectionsToolbar.access.loggedIn === true) {
+        if (xhReq.status == 200) {
             try {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "Successfully authenticated with Connections.");
+                ConnectionsToolbar.logger.info("Successfully authenticated with Connections.");
                 callback();
             } catch (e) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                        e);
+                ConnectionsToolbar.logger.error(e);
                 ConnectionsToolbar.logger
-                        .log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "Exception occurred during execution of post-login callback.");
+                        .error("Exception occurred during execution of post-login callback.");
             }
         } else {
-            if (ConnectionsToolbar.access.invalidLoginCredentials) {
+            if (xhReq.status == 401) {
                 ConnectionsToolbar.logger
-                        .log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "Unable to log into Connections Toolbar.  Please verify your login credentials.");
-                ConnectionsToolbar.access.openloginAlert();
+                        .error("Unable to log into Connections Toolbar.  Please verify your login credentials.");
+                ConnectionsToolbar.access.openLoginAlert();
                 ConnectionsToolbar.access.continueOnError = false;
             } else {
                 ConnectionsToolbar.logger
-                        .log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                "Unable to log into ConnectionsToolbar.  Unknown error.");
+                        .error("Unable to log into ConnectionsToolbar.  Unknown error.");
             }
             ConnectionsToolbar.access.processError(callback);
         }
     },
 
-    openloginAlert : function() {
+    openLoginAlert : function() {
         window.openDialog(
-                "chrome://connections-toolbar/content/loginAlert.xul",
-                "", "centerscreen,toolbar", ConnectionsToolbar);
+                "chrome://connections-toolbar/content/loginAlert.xul", "",
+                "centerscreen,toolbar", ConnectionsToolbar);
     },
-    
+
     /**
-     * Enter description here...
+     * Processes the error from the Connections login
      * 
      * @param function
      *            callback -
-     *            ConnectionsToolbar.browserOverlay.getContentAndRecommendations()
+     *            ConnectionsToolbar.browserOverlay.getAllContent()
      */
     processError : function(callback) {
-        if (ConnectionsToolbar.access.continueOnError 
-                && Application.prefs
-                .get("extensions.connections-toolbar.configured").value === true) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                    "Ignoring the login error, and continuing");
+        if (ConnectionsToolbar.access.continueOnError
+                && ConnectionsToolbar.browserOverlay.prefService
+                        .getBoolPref("extensions.connections-toolbar.configured") === true) {
+            ConnectionsToolbar.logger.info("Ignoring the login error, and continuing");
             callback();
         } else {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                "Unable to Configure toolbar.  Exiting processing...");
+            ConnectionsToolbar.logger.error("Unable to Configure toolbar.  Exiting processing...");
         }
         ConnectionsToolbar.access.continueOnError = false;
     },
 
     isLoggedIn : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Checking if logged in");
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Is logged in returns: " + ConnectionsToolbar.access.loggedIn);
+        ConnectionsToolbar.logger.info("Checking if logged in");
+        ConnectionsToolbar.logger.info("Is logged in returns: " + ConnectionsToolbar.access.loggedIn);
         return ConnectionsToolbar.access.loggedIn;
     },
 
     setLoginInfo : function(loginInfo) {
         ConnectionsToolbar.access.deleteLoginInfo();
+        ConnectionsToolbar.logger.info("Clearing your credentials before saving them");
         if (loginInfo != null) {
             if (loginInfo.username.length > 0 && loginInfo.password.length > 0) {
                 ConnectionsToolbar.access.loginManager.addLogin(loginInfo);
                 ConnectionsToolbar.access.invalidLoginCredentials = false;
+            } else {
+                ConnectionsToolbar.logger.error("Problem saving your credentials");
             }
         }
     }

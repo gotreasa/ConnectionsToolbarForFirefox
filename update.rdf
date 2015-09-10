@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -28,9 +28,9 @@
                             <r:Description>
                                 <id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}
                                 </id>
-                                <minVersion>@firefox.version.min@</minVersion>
-                                <maxVersion>@firefox.version.max@</maxVersion>
-                                <updateLink>https://w3-connections.ibm.com/files/form/anonymous/api/library/1683f9e8-d50e-499e-ad21-a1a18f871922/document/3439ef15-285d-42fa-a1b6-a857f22c20ab/media/connections-toolbar@toolbar.version@.xpi
+                                <minVersion>10.0.0.0.0</minVersion>
+                                <maxVersion>999.1.1</maxVersion>
+                                <updateLink>Update this URL
                                 </updateLink>
                                 <updateHash>
                                     sha256:@CHECKSUM@
@@ -42,5 +42,4 @@
             </r:Seq>
         </updates>
     </r:Description>
-
 </r:RDF>

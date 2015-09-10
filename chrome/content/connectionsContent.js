@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,32 +20,54 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 
 ConnectionsToolbar.content = {
 
-    getContent : function() {
-        for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
-            ConnectionsToolbar.content.fetchContent(component);
+    /**
+     * Get the particular type of content requested
+     * 
+     * @param String type - type of content to be fetched
+     */
+    getContent : function(type) {
+        for (var name in ConnectionsToolbar.constants.COMPONENTS) {
+            var component = ConnectionsToolbar.constants.COMPONENTS[name];
+            ConnectionsToolbar.content.fetchContent(component, type);
         }
     },
 
-    fetchContent : function(component) {
-        if (ConnectionsToolbar.componentService.isComponentEnabled(component)) {
+    /**
+     * Fetch the content from Connections server for the particular type and component
+     * 
+     * @param String component - name of component you retrieving the content for
+     * @param String type - content type you want to retrieve
+     */
+    fetchContent : function(component, type) {
+        if((type === ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING
+                && component !== ConnectionsToolbar.constants.COMPONENTS.DOGEAR)
+                || type !== ConnectionsToolbar.constants.DATA_TYPE.CONTENT
+                || type !== ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
+            if (ConnectionsToolbar.componentService.isComponentEnabled(component)) {
 
-            var numberOfItems = ConnectionsToolbar.componentService
-                    .getComponentContentCount(component);
-            if (numberOfItems > 0) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "Fetching max " + numberOfItems + " content items for "
-                                + component);
-                var componentURL = ConnectionsToolbar.componentService
-                        .getComponentURL(component);
-                var componentContext = ConnectionsToolbar.componentService
-                        .getComponentContentContext(component);
-                var requestURL = componentURL + componentContext
+                var numberOfItems = ConnectionsToolbar.componentService
+                        .getComponentContentCount(component, type);
+                if (numberOfItems > 0) {
+                    ConnectionsToolbar.logger.info("Fetching max " + numberOfItems + " " + type + " content items for "
+                                    + component);
+                    var componentURL = ConnectionsToolbar.componentService
+                            .getComponentURL(component);
+                    var componentContext = ConnectionsToolbar.componentService
+                            .getComponentContentContext(component, type);
+
+                    var requestURL;
+                    if(type !== ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
+                        requestURL = componentURL + componentContext
                         + numberOfItems;
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "The request url for " + component + " content is " + requestURL);
+                    } else {
+                        requestURL = componentContext
+                                + numberOfItems;
+                    }
+                    ConnectionsToolbar.logger.info("The request url for " + component + " " + type + " content is " + requestURL);
 
-                ConnectionsToolbar.data.loadFeed(component, requestURL, false);
+                    ConnectionsToolbar.data.loadFeed(component, requestURL,
+                            type);
+                }
             }
         }
     },
@@ -53,26 +75,23 @@ ConnectionsToolbar.content = {
     /**
      * Enter description here ...
      */
-    populateComponentUi : function(component) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Content is about to populate");
+    populateComponentUi : function(component, type) {
+        ConnectionsToolbar.logger.info(type + " content is about to populate");
         if (ConnectionsToolbar.componentService.isComponentEnabled(component)) {
             ConnectionsToolbar.browserOverlay.showButton("connections-"
                     + component + "-button", true);
             ConnectionsToolbar.browserOverlay.showButton("search-scope-"
                     + component, true);
             
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                    "Content is populating");
-            var popupID = "my-" + component + "-popup";
+            ConnectionsToolbar.logger.info(type +" content is populating");
+            var popupID = type + "-" + component + "-popup";
             var popup = document.getElementById(popupID);
 
             if (typeof (popup) != "undefined" && popup != null) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                        "Removing old " + component + " content items from UI");
+                ConnectionsToolbar.logger.info("Removing old " + component + " " + type + " content items from UI");
 
                 var contentData = ConnectionsToolbar.data
-                        .getComponentContent(component);
+                        .getComponentContent(component, type);
                 if (contentData != null) {
                     for ( var i = 0; i < contentData.length; i++) {
                         try {
@@ -91,17 +110,15 @@ ConnectionsToolbar.content = {
                             }
 
                             var menuItem = ConnectionsToolbar.menuUtils
-                                    .createMenuItem(title, component, favicon,
+                                    .createMenuItem(title, component, type, favicon,
                                             url, downloadUrl);
                             popup.appendChild(menuItem);
                         } catch (e) {
-                            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                                    e);
+                            ConnectionsToolbar.logger.error(e);
                             ConnectionsToolbar.logger
-                                    .log(ConnectionsToolbar.constants.LOGGER.INFO,
-                                            "An exception occurred during processing "
+                                    .info("An exception occurred during processing "
                                                     + component
-                                                    + " content item: " + e);
+                                                    + " " + type + " content item: " + e);
                         }
                     }
                 }
@@ -109,26 +126,28 @@ ConnectionsToolbar.content = {
                 if (contentData != null && contentData.length > 0) {
                     ConnectionsToolbar.menuUtils.hidePlaceholder(popup);
                 } else {
-                    ConnectionsToolbar.menuUtils.showPlaceholder(popup, "content", component);
+                    ConnectionsToolbar.menuUtils.showPlaceholder(popup,
+                            ConnectionsToolbar.constants.DATA_TYPE.CONTENT,
+                            component);
                 }
             }
 
             ConnectionsToolbar.browserOverlay.enableButton("connections-"
                     + component + "-button");
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "The " + component
-                    + " content items loaded into UI");
+            ConnectionsToolbar.logger.info("The " + component
+                    + " " + type + " content items loaded into UI");
 
-            Application.prefs
-                .get("extensions.connections-toolbar.configured").value = true;
+            ConnectionsToolbar.browserOverlay.prefService
+                .setBoolPref("extensions.connections-toolbar.configured", true);
         } else {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "The " + component
+            ConnectionsToolbar.logger.info("The " + component
                     + " are disabled.  Hiding menu options.");
             ConnectionsToolbar.browserOverlay.showButton("connections-" + component
                     + "-button", false);
             ConnectionsToolbar.browserOverlay.showButton("search-scope-" + component,
                     false);
-            if(Application.prefs
-                    .get("extensions.connections-toolbar.search").value == component) {
+            if(ConnectionsToolbar.browserOverlay.prefService
+                    .getCharPref("extensions.connections-toolbar.search") == component) {
                 ConnectionsToolbar.searchFilter.update(null, "");
             }
         }

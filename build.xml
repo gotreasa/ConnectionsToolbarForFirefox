@@ -1,5 +1,6 @@
-/*
- * © Copyright IBM Corp. 2011, 2013
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -12,14 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
- */
- 
- if ("undefined" == typeof (ConnectionsLogin)) {
-    var ConnectionsLogin = {};
-};
+ -->
+<project name="Connections-Toolbar" default="build-zip" basedir=".">
 
-ConnectionsLogin.alert = {
-    openPreferences : function() {
-        
-    }
-};
+    <!--Variables-->
+    <property file="external.properties" />
+    <import file="package.xml"/>
+</project>
