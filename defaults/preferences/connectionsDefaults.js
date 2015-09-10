@@ -1,5 +1,3 @@
-pref("extensions.connections-toolbar.blogs.homepage",                           "homepage");
-
 pref("extensions.connections-toolbar.content.activities.count",                 20);
 pref("extensions.connections-toolbar.content.blogs.count",                      20);
 pref("extensions.connections-toolbar.content.dogear.count",                     20);
@@ -8,7 +6,14 @@ pref("extensions.connections-toolbar.content.files.count",                      
 pref("extensions.connections-toolbar.content.forums.count",                     20);
 pref("extensions.connections-toolbar.content.wikis.count",                      20);
 
-pref("extensions.connections-toolbar.recommendations.allConnections.count",     10);
+pref("extensions.connections-toolbar.following.activities.count",               20);
+pref("extensions.connections-toolbar.following.blogs.count",                    20);
+pref("extensions.connections-toolbar.following.dogear.count",                   20);
+pref("extensions.connections-toolbar.following.communities.count",              20);
+pref("extensions.connections-toolbar.following.files.count",                    20);
+pref("extensions.connections-toolbar.following.forums.count",                   20);
+pref("extensions.connections-toolbar.following.wikis.count",                    20);
+
 pref("extensions.connections-toolbar.recommendations.activities.count",         10);
 pref("extensions.connections-toolbar.recommendations.blogs.count",              10);
 pref("extensions.connections-toolbar.recommendations.dogear.count",             10);
@@ -17,8 +22,9 @@ pref("extensions.connections-toolbar.recommendations.files.count",              
 pref("extensions.connections-toolbar.recommendations.forums.count",             10);
 pref("extensions.connections-toolbar.recommendations.wikis.count",              10);
 
-pref("extensions.connections-toolbar.logging.enabled",                          false);
-pref("extensions.connections-toolbar.create.button.enabled",                    false);
+pref("extensions.connections-toolbar.logging.enable",                           false);
+pref("extensions.connections-toolbar.create.button.enable",                     false);
+pref("extensions.connections-toolbar.use.tabs.enable",                          false);
 pref("extensions.connections-toolbar.search",                                   "all");
 
 pref("extensions.connections-toolbar.scheduler.frequency",                      86400000);
@@ -57,3 +63,5 @@ pref("extensions.connections-toolbar.profiles.url",                             
 pref("extensions.connections-toolbar.search.url",                                "https://greenhouse.lotus.com/search");
 pref("extensions.connections-toolbar.wikis.url",                                 "");
 pref("extensions.connections-toolbar.bookmarklet.url",                           "");
+
+pref("extensions.connections-toolbar.login.disable",                            false);

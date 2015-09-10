@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -22,8 +22,8 @@ ConnectionsToolbar.searchFilter = {
     value : "",
 
     init : function() {
-        selectedStr = Application.prefs
-                .get("extensions.connections-toolbar.search").value;
+        var selectedStr = ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.search");
         var componentImage = document.getElementById("search-scope-image");
         if(componentImage != null) {
             componentImage.className = "connections-" + selectedStr + "-list-item";
@@ -41,7 +41,7 @@ ConnectionsToolbar.searchFilter = {
     update : function(aEvent, selected) {
         // window.alert(selected);
         var selectedStr = selected == "" ? "all" : selected;
-        Application.prefs.get("extensions.connections-toolbar.search").value = selectedStr;
+        ConnectionsToolbar.browserOverlay.prefService.setCharPref("extensions.connections-toolbar.search", selectedStr);
         // window.alert(selectedStr);
         var componentImage = document.getElementById("search-scope-image");
         componentImage.className = "connections-" + selectedStr + "-list-item";

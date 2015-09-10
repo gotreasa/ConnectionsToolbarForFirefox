@@ -1,0 +1,3 @@
+<!ENTITY connections.login.bad.credentials                      "IBM Connections にログインできませんでした。IBM Connections ツールバーのユーザー名/パスワードを設定しますか？">
+<!ENTITY connections.alert.bad.credentials                      "認証情報が不正です">
+<!ENTITY connections.dialog.close                               "閉じる">

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -18,8 +18,8 @@
     xmlns:NC="http://home.netscape.com/NC-rdf#" xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <RDF:Description RDF:about="urn:mozilla:install-manifest"
         em:id="ibm-connections-toolbar@ie.ibm.com"
-        em:name="IBM Connections Toolbar"
-        em:description="IBM Connections Toolbar"
+        em:name="Connections Toolbar"
+        em:description="Connections Toolbar"
         em:version="@toolbar.version@"
         em:creator="IBM"
         em:homepageURL="https://www.ibm.com/developerworks/mydeveloperworks/groups/service/html/communityview?communityUuid=4aee1970-6f11-45de-aa2a-1d53f0fc4b5f"
@@ -27,12 +27,13 @@
         em:optionsURL="chrome://connections-toolbar/content/preferencesWindow.xul"
         em:iconURL="chrome://connections-toolbar/skin/images/55-network.png">
         <em:targetApplication RDF:resource="rdf:#$8hhKO1" />
-        <em:contributor>Ciaran O hUallachain</em:contributor>
         <em:developer>Gearoid O Treasaigh</em:developer>
-        <em:developer>Paul Magrath</em:developer>
+        <em:translator>Naoyuki Furuya (ja-JP)</em:translator>
+        <em:contributor>Ciaran O hUallachain</em:contributor>
+        <em:contributor>Paul Magrath</em:contributor>
     </RDF:Description>
     <RDF:Description RDF:about="rdf:#$8hhKO1"
         em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}" 
-        em:minVersion="10.0"
-        em:maxVersion="20.0" />
+        em:minVersion="10.0.0.0.0"
+        em:maxVersion="999.1.1" />
 </RDF:RDF>

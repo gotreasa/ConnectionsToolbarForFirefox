@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -23,15 +23,15 @@ ConnectionsToolbar.scheduler = {
     run : function(result) {
         var d = new Date();
         var currentTime = d.getTime();
-        nextTime = parseInt(Application.prefs
-                .get("extensions.connections-toolbar.scheduler.next-run").value);
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Running again at: " + nextTime);
+        var nextTime = parseInt(ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.scheduler.next-run"));
+        ConnectionsToolbar.logger.info("Running again at: " + nextTime);
 
         ConnectionsToolbar.scheduler.runLogin = true;
 
         var count = null;
         if (nextTime <= currentTime) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "It's time to run");
+            ConnectionsToolbar.logger.info("It's time to run");
             ConnectionsToolbar.scheduler.fullRefresh();
         } else {
             if(typeof (result) != "undefined" && result != null) {
@@ -40,12 +40,12 @@ ConnectionsToolbar.scheduler = {
             }
             
             if(typeof (count) == "undefined" || count == null || count == 0) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "There's nothing in the database");
+                ConnectionsToolbar.logger.info("There's nothing in the database");
                 ConnectionsToolbar.scheduler.fullRefresh();
             } else {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Just loading the content");
-                if(Application.prefs
-                        .get("extensions.connections-toolbar.configured").value == true) {
+                ConnectionsToolbar.logger.info("Just loading the content");
+                if(ConnectionsToolbar.browserOverlay.prefService
+                        .getBoolPref("extensions.connections-toolbar.configured") == true) {
                     ConnectionsToolbar.browserOverlay.repaint(ConnectionsToolbar.browserOverlay.loadContent);
                     ConnectionsToolbar.scheduler.setNextRun();
                 } else {
@@ -61,57 +61,57 @@ ConnectionsToolbar.scheduler = {
     },
     
     disableToolbarAndRefresh : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Disabling the toolbar and refreshing");
+        ConnectionsToolbar.logger.info("Disabling the toolbar and refreshing");
         for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
+            var component = ConnectionsToolbar.constants.COMPONENTS[name];
             ConnectionsToolbar.browserOverlay.disableButton("connections-"
                     + component + "-button");
         }
         ConnectionsToolbar.browserOverlay.disableButton("recommendations-menu");
-        ConnectionsToolbar.browserOverlay.disableButton("connections-hot-button");
         ConnectionsToolbar.browserOverlay.disableButton("connections-homepage-button");
         ConnectionsToolbar.browserOverlay.disableButton("connections-profiles-button");
         ConnectionsToolbar.browserOverlay.disableButton("connections-search-term");
+        ConnectionsToolbar.browserOverlay.disableButton("search-scope-image");
         ConnectionsToolbar.scheduler.fullRefresh();
     },
 
     setNextRun : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO, "Setting the next run of the scheduler");
+        ConnectionsToolbar.logger.info("Setting the next run of the scheduler");
         var d = new Date();
         var hours = d.getHours();
 
-        var scheduledHour = Application.prefs
-            .get("extensions.connections-toolbar.scheduler.hour").value;
-        var randomMillisecond = Application.prefs
-            .get("extensions.connections-toolbar.scheduler.random").value;
-        var frequency = Application.prefs
-            .get("extensions.connections-toolbar.scheduler.frequency").value;
+        var scheduledHour = ConnectionsToolbar.browserOverlay.prefService
+            .getIntPref("extensions.connections-toolbar.scheduler.hour");
+        var randomMillisecond = ConnectionsToolbar.browserOverlay.prefService
+        .getIntPref("extensions.connections-toolbar.scheduler.random");
+        var frequency = ConnectionsToolbar.browserOverlay.prefService
+        .getIntPref("extensions.connections-toolbar.scheduler.frequency");
 
-        if(Application.prefs
-                .get("extensions.connections-toolbar.scheduler.frequency").value == 86400000) {
+        if(ConnectionsToolbar.browserOverlay.prefService
+                .getIntPref("extensions.connections-toolbar.scheduler.frequency") == 86400000) {
             if(scheduledHour > hours) {
                 d.setHours(scheduledHour, 0, 0, 0);
-                Application.prefs
-                        .get("extensions.connections-toolbar.scheduler.next-run").value =
-                            (d.getTime() + randomMillisecond).toString();
+                ConnectionsToolbar.browserOverlay.prefService
+                		.setCharPref("extensions.connections-toolbar.scheduler.next-run",
+                            (d.getTime() + randomMillisecond).toString());
             } else {
                 d.setHours(scheduledHour, 0, 0, 0);
-                Application.prefs
-                        .get("extensions.connections-toolbar.scheduler.next-run").value =
-                            (d.getTime() + frequency + randomMillisecond).toString(); 
+                ConnectionsToolbar.browserOverlay.prefService
+                        .setCharPref("extensions.connections-toolbar.scheduler.next-run",
+                            (d.getTime() + frequency + randomMillisecond).toString()); 
                 // Adding on 24 hours and random minute, second, and millisecond
             }
         } else {
-            Application.prefs
-                .get("extensions.connections-toolbar.scheduler.next-run").value =
-                (d.getTime() + frequency).toString(); 
+        	ConnectionsToolbar.browserOverlay.prefService
+                .setCharPref("extensions.connections-toolbar.scheduler.next-run",
+                (d.getTime() + frequency).toString()); 
         }
 
         var currentDate = new Date();
         setTimeout(function() {
         		ConnectionsToolbar.scheduler.run();
-        	}, (parseInt(Application.prefs
-                .get("extensions.connections-toolbar.scheduler.next-run").value)
+        	}, (parseInt(ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.scheduler.next-run"))
                 - currentDate.getTime()));
     }
 };

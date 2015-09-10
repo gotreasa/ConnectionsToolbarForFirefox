@@ -1,0 +1,95 @@
+<!ENTITY connections.recommendations.label                      "おすすめ">
+<!ENTITY connections.following.label                            "フォロー中">
+<!ENTITY connections.content.label                              "マイ・コンテンツ">
+
+<!ENTITY connections.toolbarName.label                          "IBM Connections ツールバー">
+<!ENTITY connections.toolbar.accesskey                          "I">
+<!ENTITY connections.toolbar.configure                          "ツールバーの設定">
+<!ENTITY connections.toolbar.configure.accesskey                "C">
+<!ENTITY connections.toolbar.reload                             "更新">
+<!ENTITY connections.toolbar.reload.accesskey                   "R">
+<!ENTITY connections.toolbar.buttons.restore                    "ツールバーボタンの復元">
+<!ENTITY connections.toolbar.buttons.restore.accesskey          "B">
+<!ENTITY connections.toolbar.enableLogging                      "再起動時にロギング有効化/無効化">
+<!ENTITY connections.toolbar.enableLogging.accesskey            "T">
+<!ENTITY connections.toolbar.help                               "ヘルプ">
+<!ENTITY connections.toolbar.help.accesskey                     "H">
+
+<!ENTITY connections.allConnections.title                       "Connections 全体">
+<!ENTITY connections.hot.title                                  "ホット・ボタン">
+<!ENTITY connections.homepage.title                             "ホーム">
+<!ENTITY connections.activities.title                           "アクティビティ">
+<!ENTITY connections.blogs.title                                "ブログ">
+<!ENTITY connections.dogear.title                               "ブックマーク">
+<!ENTITY connections.communities.title                          "コミュニティー">
+<!ENTITY connections.directory.title                            "ディレクトリー">
+<!ENTITY connections.files.title                                "ファイル">
+<!ENTITY connections.forums.title                               "フォーラム">
+<!ENTITY connections.profiles.title                             "プロフィール">
+<!ENTITY connections.wikis.title                                "Wiki">
+<!ENTITY connections.status_updates.title                       "最新の状況">
+<!ENTITY connections.search.title                               "検索">
+<!ENTITY connections.advancedSearch.title                       "拡張">
+<!ENTITY connections.settings.title                             "設定">
+<!ENTITY connections.searchBox.emptyText                        "Connections の検索">
+
+<!ENTITY connections.dialog.server.description                  "IBM Connections サーバーの検索アプリケーションの URL を入力してください。ツールバー名をクリックした時のリンク先を Hot URL に設定できます。">
+<!ENTITY connections.dialog.components.description              "各アプリケーションの表示件数の指定。おすすめは IBM Connections 3.0 以上でのみ有効です。">
+
+<!ENTITY connections.dialog.urls                                "URL">
+<!ENTITY connections.dialog.search.url.title                    "検索 URL: ">
+<!ENTITY connections.dialog.search.url.error                    "https://&lt;hostname&gt;/search の形式で検索アプリケーションの URL を入力。">
+<!ENTITY connections.dialog.hot.url.title                       "Hot URL: ">
+
+<!ENTITY connections.dialog.credentials                         "認証情報">
+<!ENTITY connections.dialog.access.username                     "ユーザー名: ">
+<!ENTITY connections.dialog.access.password                     "パスワード: ">
+
+<!ENTITY connections.dialog.title                               "IBM Connections ツールバーの設定">
+<!ENTITY connections.dialog.settings.server.title               "共通設定">
+<!ENTITY connections.dialog.settings.components.title           "アプリケーション別設定">
+<!ENTITY connections.dialog.component.heading                   "アプリケーション">
+<!ENTITY connections.dialog.url.heading                         "URL">
+<!ENTITY connections.dialog.filter.heading                      "フィルター">
+<!ENTITY connections.dialog.close                               "保存して閉じる">
+
+<!ENTITY connections.dialog.scheduler.description               "ツールバーの更新間隔">
+<!ENTITY connections.dialog.settings.scheduler.title            "スケジュール設定">
+<!ENTITY connections.dialog.scheduler.frequency                 "更新頻度：">
+<!ENTITY connections.dialog.scheduler.hour                      "毎日の次の時刻">
+<!ENTITY connections.dialog.scheduler                           "スケジュール">
+
+<!ENTITY connections.dialog.use.tabs                            "新しいタブで開く">
+
+<!ENTITY connections.recommendations.bycomponent                "アプリケーション">
+<!ENTITY connections.recommendations.norecommendations          "おすすめはありません">
+<!ENTITY connections.following.nofollowing                      "フォローしているアイテムはありません">
+
+<!ENTITY connections.activities.nocontent                       "アクティビティはありません">
+<!ENTITY connections.blogs.nocontent                            "ブログはありません">
+<!ENTITY connections.dogear.nocontent                           "ブックマークはありません">
+<!ENTITY connections.communities.nocontent                      "コミュニティーはありません">
+<!ENTITY connections.files.nocontent                            "ファイルはありません">
+<!ENTITY connections.forums.nocontent                           "フォーラムはありません">
+<!ENTITY connections.wikis.nocontent                            "Wiki はありません">
+
+<!ENTITY connections.activities.new                             "アクティビティの開始">
+<!ENTITY connections.blogs.new                                  "ブログの開始">
+<!ENTITY connections.dogear.bookmarkthis                        "このページをブックマーク">
+<!ENTITY connections.communities.new                            "コミュニティーを開始">
+<!ENTITY connections.files.upload                               "ファイルのアップロード">
+<!ENTITY connections.forums.new                                 "フォーラムの開始">
+<!ENTITY connections.wikis.new                                  "Wiki の開始">
+
+<!ENTITY connections.menu.open                                  "開く">
+<!ENTITY connections.menu.open.accesskey                        "O">
+<!ENTITY connections.menu.open.tab                              "新しいタブで開く">
+<!ENTITY connections.menu.open.tab.accesskey                    "T">
+<!ENTITY connections.menu.files.donwnload                       "ファイルをダウンロード">
+<!ENTITY connections.menu.files.donwnload.accesskey             "D">
+<!ENTITY connections.menu.copy.url                              "URL をコピー">
+<!ENTITY connections.menu.copy.url.accesskey                    "C">
+
+<!ENTITY connections.not.applicable                             "対象がありません。">
+<!ENTITY connections.about                                      "IBM Connections ツールバーについて">
+<!ENTITY connections.about.accesskey                            "A">

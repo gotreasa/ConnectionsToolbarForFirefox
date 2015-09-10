@@ -1,17 +1,17 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at:
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 if ("undefined" == typeof (ConnectionsToolbar)) {
@@ -20,35 +20,41 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 
 ConnectionsToolbar.preferences = {
     contentCountComponents : null,
-    recommendationsCountComponents : null,
     searchURL : "",
     connectionsHotURL : "",
     loggingEnabled : false,
     setCredentials : false,
+    preferenceDialog : null,
 
     configure : function(event, opener, setCredentials) {
-        if(setCredentials == true) {
+        if (setCredentials == true) {
             ConnectionsToolbar.preferences.setCredentials = setCredentials;
         } else {
             ConnectionsToolbar.preferences.setCredentials = false;
         }
-        var dlg = window.openDialog(
+        ConnectionsToolbar.preferences.preferenceDialog = window.openDialog(
                 "chrome://connections-toolbar/content/preferencesWindow.xul",
                 ConnectionsToolbar.NLS.get("connections.dialog.title"),
                 "centerscreen,toolbar", ConnectionsToolbar);
-        dlg.focus();
+        ConnectionsToolbar.preferences.preferenceDialog.focus();
     },
 
     toggleLogging : function(event) {
         // alert("toggling logging functionality");
         ConnectionsToolbar.preferences.loggingEnabled = !this.loggingEnabled;
-        Application.prefs.get("extensions.connections-toolbar.logging.enabled").value = ConnectionsToolbar.preferences.loggingEnabled;
+        ConnectionsToolbar.browserOverlay.prefService.setBoolPref("extensions.connections-toolbar.logging.enable",
+        		ConnectionsToolbar.preferences.loggingEnabled);
         ConnectionsToolbar.preferences.updateLoggingMenuOption();
     },
 
     updateLoggingMenuOption : function() {
         try {
             document.getElementById("toggle-logging").setAttribute("checked",
+                    ConnectionsToolbar.preferences.loggingEnabled);
+        } catch (e) {
+        }
+        try {
+            document.getElementById("toggle-logging-setting-menu").setAttribute("checked",
                     ConnectionsToolbar.preferences.loggingEnabled);
         } catch (e) {
         }
@@ -60,80 +66,70 @@ ConnectionsToolbar.preferences = {
     },
 
     refreshPreferences : function() {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Refreshing preferences.");
+        ConnectionsToolbar.logger.info("Refreshing preferences.");
 
-        ConnectionsToolbar.preferences.loggingEnabled = Application.prefs
-                .get("extensions.connections-toolbar.logging.enabled").value;
+        ConnectionsToolbar.preferences.loggingEnabled = ConnectionsToolbar.browserOverlay.prefService
+                .getBoolPref("extensions.connections-toolbar.logging.enable");
         ConnectionsToolbar.preferences.updateLoggingMenuOption();
 
-        ConnectionsToolbar.preferences.searchURL = Application.prefs
-                .get("extensions.connections-toolbar.search.url").value;
+        ConnectionsToolbar.preferences.searchURL = ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.search.url");
 
-        ConnectionsToolbar.preferences.connectionsHotURL = Application.prefs
-                .get("extensions.connections-toolbar.hot.url").value;
+        ConnectionsToolbar.preferences.connectionsHotURL = ConnectionsToolbar.browserOverlay.prefService
+                .getCharPref("extensions.connections-toolbar.hot.url");
 
         ConnectionsToolbar.preferences.contentCountComponents = new Array();
-        for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
-            ConnectionsToolbar.preferences.contentCountComponents[component] = Application.prefs
-                    .get("extensions.connections-toolbar.content." + component
-                            + ".count").value;
-        }
+        for (value in ConnectionsToolbar.constants.DATA_TYPE) {
+            var type = ConnectionsToolbar.constants.DATA_TYPE[value];
 
-        ConnectionsToolbar.preferences.recommendationsCountComponents = new Array();
-        ConnectionsToolbar.preferences.recommendationsCountComponents["allConnections"] = Application.prefs
-                .get("extensions.connections-toolbar.recommendations.allConnections.count").value;
-        for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
-            ConnectionsToolbar.preferences.recommendationsCountComponents[component] = Application.prefs
-                    .get("extensions.connections-toolbar.recommendations." + component
-                            + ".count").value;
+            ConnectionsToolbar.preferences.contentCountComponents[type] = new Array();
+            for (name in ConnectionsToolbar.constants.COMPONENTS) {
+                var component = ConnectionsToolbar.constants.COMPONENTS[name];
+
+                var typeName = "";
+                if(type == ConnectionsToolbar.constants.DATA_TYPE.CONTENT) {
+                    typeName = "content";
+                } else if(type == ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS) {
+                    typeName = "recommendations";
+                } else if(type == ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING) {
+                    typeName = "following";
+                }
+                ConnectionsToolbar.preferences.contentCountComponents[type][component] = ConnectionsToolbar.browserOverlay.prefService
+                        .getIntPref("extensions.connections-toolbar."
+                                + typeName + "."
+                                + component + ".count");
+            }
         }
     },
 
-    getComponentContentCount : function(componentName) {
+    // TODO: remove duplicate function in connectionsComponentService
+    getComponentContentCount : function(componentName, type) {
         var count = 0;
         try {
-            count = ConnectionsToolbar.preferences.contentCountComponents[componentName];
+            count = ConnectionsToolbar.preferences.contentCountComponents[type][componentName];
             if (typeof (count) == "undefined") {
                 count = 0;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, 
-                    "Unable to get the content count for " + componentName);
+            ConnectionsToolbar.logger.error(e);
+            ConnectionsToolbar.logger.error("Unable to get the content count for " + componentName);
             count = 0;
         }
         return count;
     },
 
-    getComponentRecommendationsCount : function(componentName) {
-        var count = 0;
-        try {
-            count = ConnectionsToolbar.preferences.recommendationsCountComponents[componentName];
-            if (typeof (count) == "undefined") {
-                count = 0;
-            }
-        } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, 
-                    "Unable to get the recommendations count for " + componentName);
-            count = 0;
-        }
-        return count;
-    },
-    
     setRandomMillisecond : function() {
-        if(Application.prefs
-             .get("extensions.connections-toolbar.scheduler.random").value == -1) {
-            Application.prefs
-                .get("extensions.connections-toolbar.scheduler.random").value = Math.random() * 3540000;
-            var milliseconds = Application.prefs.get("extensions.connections-toolbar.scheduler.random").value;
-            Application.prefs
-                .get("extensions.connections-toolbar.scheduler.minute").value = milliseconds / 60000;
-            Application.prefs
-                .get("extensions.connections-toolbar.scheduler.second").value  = (milliseconds / 1000) % 60;
+        if (ConnectionsToolbar.browserOverlay.prefService
+                .getIntPref("extensions.connections-toolbar.scheduler.random") == -1) {
+        	ConnectionsToolbar.browserOverlay.prefService
+                    .setIntPref("extensions.connections-toolbar.scheduler.random", Math
+                    .random() * 3540000);
+            var milliseconds = ConnectionsToolbar.browserOverlay.prefService
+                    .getIntPref("extensions.connections-toolbar.scheduler.random");
+            ConnectionsToolbar.browserOverlay.prefService
+                    .setIntPref("extensions.connections-toolbar.scheduler.minute", milliseconds / 60000);
+            ConnectionsToolbar.browserOverlay.prefService
+                    .setIntPref("extensions.connections-toolbar.scheduler.second", (milliseconds / 1000) % 60);
         }
     }
 };

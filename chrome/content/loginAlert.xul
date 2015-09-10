@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,29 +21,34 @@
     "chrome://connections-toolbar/locale/loginAlert.dtd">
 
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    id="loginAlert" title="&connections.alert.bad.credentials;" height="115px" width="560px"
-    onload="ConnectionsPreferences.preferenceSettings.init();"
+    id="loginAlert" title="&connections.alert.bad.credentials;" height="115px"
+    width="560px" onload="ConnectionsPreferences.preferenceSettings.init();"
     buttons="accept,cancel"
+    buttonlabelcancel="Ignore"
     ondialogaccept="return ConnectionsToolbar.preferences.configure(event, window.opener, true);"
     ondialogcancel="return;">
 
-    <script src="chrome://connections-toolbar/content/connectionsPreferences.js"/>
-    <script src="chrome://connections-toolbar/content/connectionsPreferencesDialog.js"/>
-
-    <grid>
-        <columns>
-            <column/>
-            <column flex="1"/>
-        </columns>
-        <rows>
-            <row>
-                <hbox align="start">
-                    <image src="chrome://connections-toolbar/skin/images/184-warning.png" width="24px" heigh="24px"/>
-                </hbox>
-                <vbox pack="center">
-                    <description id="info.body" context="contentAreaContextMenu" noinitialfocus="true">&connections.login.bad.credentials;</description>
-                </vbox>
-            </row>
-        </rows>
-    </grid>
+    <script src="chrome://connections-toolbar/content/connectionsPreferences.js" />
+    <script
+        src="chrome://connections-toolbar/content/connectionsPreferencesDialog.js" />
+        <grid>
+            <columns>
+                <column />
+                <column flex="1" />
+            </columns>
+            <rows>
+                <row>
+                    <hbox align="start">
+                        <image
+                            src='chrome://connections-toolbar/skin/images/Icons/Messages/msgWarning48.png'
+                            width="32px" height="32px" />
+                    </hbox>
+                    <vbox pack="center">
+                        <description id="info.body" context="contentAreaContextMenu"
+                            noinitialfocus="true">&connections.login.bad.credentials;
+                        </description>
+                    </vbox>
+                </row>
+            </rows>
+        </grid>
 </dialog>

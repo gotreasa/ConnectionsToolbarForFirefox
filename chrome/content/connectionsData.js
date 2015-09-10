@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,7 +19,6 @@ if ("undefined" == typeof (ConnectionsToolbar)) {
 };
 
 ConnectionsToolbar.data = {
-    recommendationsByComponent : null,
     contentByComponent : null,
     init : function() {
         ConnectionsToolbar.data.initialiseContentObjects();
@@ -29,60 +28,41 @@ ConnectionsToolbar.data = {
      * 
      */
     loadFeed : function(component, requestURL, isRecommendationsRequest) {
-        ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.INFO,
-                "Loading "
-                        + (isRecommendationsRequest ? "recommendations"
-                                : "content") + " feed for " + component);
+        ConnectionsToolbar.logger.info("Loading "
+                        + isRecommendationsRequest + " feed for " + component);
         ConnectionsToolbar.feed.fetchFeed(component, requestURL,
                 isRecommendationsRequest);
     },
 
-    getComponentContent : function(component) {
+    getComponentContent : function(component, type) {
         var data = null;
-        // return ConnectionsToolbar.data.contentByComponent[component];
-        try {
-            data = ConnectionsToolbar.data.contentByComponent[component];
-            if (typeof (data) == "undefined") {
-                data = null;
-            }
-        } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                    "Unable to get content for: " + component);
-            data = null;
-        }
-        return data;
-    },
 
-    getComponentRecommendations : function(component) {
-        var data = null;
-        // return ConnectionsToolbar.data.recommendationsByComponent[component];
         try {
-            data = ConnectionsToolbar.data.recommendationsByComponent[component];
+            data = ConnectionsToolbar.data.contentByComponent[type][component];
             if (typeof (data) == "undefined") {
                 data = null;
             }
         } catch (e) {
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR, e);
-            ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                    "Unable to get recommendations for: " + component);
+            ConnectionsToolbar.logger.error(e);
+            ConnectionsToolbar.logger.error("Unable to get " + type
+                    + " content for: " + component);
             data = null;
         }
         return data;
     },
 
     initialiseContentObjects : function() {
-        ConnectionsToolbar.data.recommendationsByComponent = new Array();
+        ConnectionsToolbar.logger.info("Initialising the objects");
         ConnectionsToolbar.data.contentByComponent = new Array();
-        ConnectionsToolbar.data.followByComponent = new Array();
-        for (name in ConnectionsToolbar.constants.COMPONENTS) {
-            component = ConnectionsToolbar.constants.COMPONENTS[name];
+        for (value in ConnectionsToolbar.constants.DATA_TYPE) {
+            var type =  ConnectionsToolbar.constants.DATA_TYPE[value];
+            ConnectionsToolbar.data.contentByComponent[type] = new Array();
 
-            ConnectionsToolbar.data.recommendationsByComponent[component] = new Array();
-            ConnectionsToolbar.data.contentByComponent[component] = new Array();
-            ConnectionsToolbar.data.followByComponent[component] = new Array();
+            for (name in ConnectionsToolbar.constants.COMPONENTS) {
+                var component = ConnectionsToolbar.constants.COMPONENTS[name];
+                ConnectionsToolbar.data.contentByComponent[type][component] = new Array();
+            }
         }
-        ConnectionsToolbar.data.recommendationsByComponent["allConnections"] = new Array();
     },
     /**
      * 
@@ -102,28 +82,12 @@ ConnectionsToolbar.data = {
             item[ConnectionsToolbar.constants.DOWNLOAD] = row
                     .getResultByName(ConnectionsToolbar.constants.DOWNLOAD);
 
-            if (item[ConnectionsToolbar.constants.TYPE] == "recommend"
-                    || item[ConnectionsToolbar.constants.TYPE] == "recommendAll") {
-                if (item[ConnectionsToolbar.constants.TYPE] == "recommendAll") {
-                    ConnectionsToolbar.data.recommendationsByComponent["allConnections"]
-                            .push(item);
-                } else {
-                    ConnectionsToolbar.data.recommendationsByComponent[item[ConnectionsToolbar.constants.COMPONENT]]
-                            .push(item);
-                }
-            } else if (item[ConnectionsToolbar.constants.TYPE] == "my") {
-                ConnectionsToolbar.data.contentByComponent[item[ConnectionsToolbar.constants.COMPONENT]]
-                        .push(item);
-            } else if (item[ConnectionsToolbar.constants.TYPE] == "follow") {
-                ConnectionsToolbar.data.followByComponent[item[ConnectionsToolbar.constants.COMPONENT]]
-                        .push(item);
-            }
+            ConnectionsToolbar.data.contentByComponent[item[ConnectionsToolbar.constants.TYPE]][item[ConnectionsToolbar.constants.COMPONENT]]
+                    .push(item);
         }
     },
 
     deleteContentObjects : function() {
-        delete ConnectionsToolbar.data.recommendationsByComponent;
         delete ConnectionsToolbar.data.contentByComponent;
-        delete ConnectionsToolbar.data.followByComponent;
     }
 };
