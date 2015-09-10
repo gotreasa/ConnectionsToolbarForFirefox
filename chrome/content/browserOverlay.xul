@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -33,9 +33,6 @@
 
     <script type="application/x-javascript"
         src="chrome://connections-toolbar/content/connectionsComponentService.js" />
-
-    <script type="application/x-javascript"
-        src="chrome://connections-toolbar/content/connectionsRecommendations.js" />
 
     <script type="application/x-javascript"
         src="chrome://connections-toolbar/content/connectionsContent.js" />
@@ -76,108 +73,17 @@
     <script type="application/x-javascript"
         src="chrome://connections-toolbar/content/connectionsScheduler.js" />
 
-    <!--<script type="application/x-javascript"
-        src="chrome://connections-toolbar/content/connectionsQueue.js" />-->
-
-    <!--<script type="application/x-javascript"
-        src="chrome://connections-toolbar/content/connectionsObserver.js" />-->
-
     <stringbundleset id="stringbundleset">
         <stringbundle id="connections-string-bundle"
             src="chrome://connections-toolbar/locale/browserOverlay.properties" />
     </stringbundleset>
 
     <toolbarpalette id="BrowserToolbarPalette">
-        <toolbaritem id="connections-recommendations-component">
-            <toolbarbutton disabled="true" accesskey="R"
-                type="menu" style="color: black;" id="recommendations-menu"
-                class="toolbarbutton-1 chromeclass-toolbar-additional connections-recommendations"
-                label="&connections.recommendations.label;" orient="horizontal"
-                tooltiptext="&connections.recommendations.label;">
-                <!-- oncommand="ConnectionsToolbar.browserOverlay.showMenu('recommendations-collection-popup', 'connections-recommendations-component');"-->
-                <menupopup id="recommendations-collection-popup">
-                    <menu class="menu-iconic connections-all"
-                        label="&connections.recommendations.bycomponent;">
-                        <menupopup id="by-component">
-                            <menu class="menu-iconic connections-activities"
-                                label="&connections.activities.title;">
-                                <menupopup
-                                    id="recommendations-activities-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-blogs"
-                                label="&connections.blogs.title;">
-                                <menupopup
-                                    id="recommendations-blogs-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-dogear"
-                                label="&connections.dogear.title;">
-                                <menupopup
-                                    id="recommendations-dogear-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-communities"
-                                label="&connections.communities.title;">
-                                <menupopup
-                                    id="recommendations-communities-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-files"
-                                label="&connections.files.title;">
-                                <menupopup
-                                    id="recommendations-files-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-forums"
-                                label="&connections.forums.title;">
-                                <menupopup
-                                    id="recommendations-forums-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                            <menu class="menu-iconic connections-wikis"
-                                label="&connections.wikis.title;">
-                                <menupopup
-                                    id="recommendations-wikis-collective-popup">
-                                    <menuitem type="placeholder"
-                                        label="&connections.recommendations.norecommendations;"
-                                        oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
-                                </menupopup>
-                            </menu>
-                        </menupopup>
-                    </menu>
-                    <menuseparator />
-                    <vbox id="recommendations-allConnections-popup">
-                        <menuitem type="placeholder"
-                            label="&connections.recommendations.norecommendations;" />
-                    </vbox>
-                </menupopup>
-            </toolbarbutton>
-        </toolbaritem>
-
         <toolbarbutton id="connections-hot-button"
             class="toolbarbutton-1 chromeclass-toolbar-additional connections-hot"
-            label="&connections.hot.title;" disabled="true" context=""
+            label="&connections.hot.title;" context=""
             onclick="checkForMiddleClick(this, event)" tooltiptext="&connections.hot.title;"
-            oncommand="ConnectionsToolbar.browserOverlay.goConnectionsHotButton(event);">IBM Connections toolbar</toolbarbutton>
+            oncommand="ConnectionsToolbar.browserOverlay.goConnectionsHotButton(event);">&connections.toolbarName.label;</toolbarbutton>
 
         <toolbarbutton id="connections-homepage-button"
             class="toolbarbutton-1 chromeclass-toolbar-additional connections-homepage"
@@ -194,9 +100,17 @@
             <menupopup context="">
                 <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-activities-popup">
+                    <menupopup id="recommend-activities-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-activities-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -220,11 +134,19 @@
             onclick="checkForMiddleClick(this, event)" context=""
             oncommand="ConnectionsToolbar.browserOverlay.goComponent('blogs', event);">
             <menupopup context="">
-                <menu label="Recommendations"
+                <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-blogs-popup">
+                    <menupopup id="recommend-blogs-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-blogs-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -248,9 +170,9 @@
             onclick="checkForMiddleClick(this, event)" context=""
             oncommand="ConnectionsToolbar.browserOverlay.goComponent('dogear', event);">
             <menupopup context="">
-                <menu label="Recommendations"
+                <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-dogear-popup">
+                    <menupopup id="recommend-dogear-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
@@ -275,11 +197,19 @@
             onclick="checkForMiddleClick(this, event)" context=""
             oncommand="ConnectionsToolbar.browserOverlay.goComponent('communities', event);">
             <menupopup context="">
-                <menu label="Recommendations"
+                <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-communities-popup">
+                    <menupopup id="recommend-communities-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-communities-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -303,11 +233,19 @@
             onclick="checkForMiddleClick(this, event)" context=""
             oncommand="ConnectionsToolbar.browserOverlay.goComponent('files', event);">
             <menupopup context="">
-                <menu label="Recommendations"
+                <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-files-popup">
+                    <menupopup id="recommend-files-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-files-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -331,11 +269,19 @@
             onclick="checkForMiddleClick(this, event)" context=""
             oncommand="ConnectionsToolbar.browserOverlay.goComponent('forums', event);">
             <menupopup context="">
-                <menu label="Recommendations"
+                <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-forums-popup">
+                    <menupopup id="recommend-forums-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-forums-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -367,9 +313,17 @@
             <menupopup context="">
                 <menu label="&connections.recommendations.label;"
                     class="menu-iconic connections-recommendations">
-                    <menupopup id="recommendations-wikis-popup">
+                    <menupopup id="recommend-wikis-popup">
                         <menuitem type="placeholder"
                             label="&connections.recommendations.norecommendations;"
+                            oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                    </menupopup>
+                </menu>
+                <menu label="&connections.following.label;"
+                    class="menu-iconic connections-Following">
+                    <menupopup id="follow-wikis-popup">
+                        <menuitem type="placeholder"
+                            label="&connections.following.nofollowing;"
                             oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)" />
                     </menupopup>
                 </menu>
@@ -387,15 +341,16 @@
         </toolbarbutton>
 
         <toolbaritem id="connections-search-component">
-            <textbox disabled="true" style="width:200px; padding:0px;"
+            <textbox disabled="true" style="width:220px; padding:0px;"
                 type="search" id="connections-search-term" 
                 label="&connections.search.title;" value=""
                 class="searchbar-textbox" searchbutton="true"
                 oncommand="ConnectionsToolbar.browserOverlay.search(event);"
                 emptytext="&connections.searchBox.emptyText;">
                 <hbox style="margin:0px; padding: 0px; min-height:20px" align="center">
-                    <toolbarbutton type="menu-button"
-                        class="connections-search-button" style="cursor:default;">
+                    <toolbarbutton type="menu-button" id="search-scope-image" oncommand="ConnectionsToolbar.browserOverlay.doNothing(event)"
+                        class="toolbarbutton-1 chromeclass-toolbar-additional searchbar-engine-button connections-search-button connections-all"
+                        style="cursor:default;" onhover="return;" mouseover="return;" disabled="true">
                         <menupopup id="search-scope-menu">
                             <menuitem id="search-scope-all"
                                 style="cursor:default" class="menuitem-iconic connections-all"
@@ -421,6 +376,11 @@
                                 class="menuitem-iconic connections-communities-list-item"
                                 label="&connections.communities.title;"
                                 oncommand="ConnectionsToolbar.searchFilter.update(event, 'communities'); ConnectionsToolbar.browserOverlay.doNothing(event)" />
+                            <menuitem id="search-scope-directory"
+                                style="cursor:default"
+                                class="menuitem-iconic connections-directory-list-item"
+                                label="&connections.directory.title;"
+                                oncommand="ConnectionsToolbar.searchFilter.update(event, 'directory'); ConnectionsToolbar.browserOverlay.doNothing(event)" />
                             <menuitem id="search-scope-files"
                                 style="cursor:default"
                                 class="menuitem-iconic connections-files-list-item"
@@ -452,29 +412,57 @@
                                 label="&connections.advancedSearch.title;"
                                 oncommand="ConnectionsToolbar.browserOverlay.goAdvancedSearch(event); ConnectionsToolbar.browserOverlay.doNothing(event)" />
                         </menupopup>
-                        <hbox>
-                            <image id="search-scope-image"
-                                style="max-height:16px; cursor:default; padding-left:2.5px;"
-                                class="connections-all" />
-                            <image id="search-scope-dropmarker"
-                                style="max-height:16px; cursor:default; padding-right:2px;"
-                                class="connections-dropmarker" />
-                        </hbox>
                     </toolbarbutton>
                 </hbox>
             </textbox>
         </toolbaritem>
 
 
-        <toolbarbutton id="connections-settings-button"
+        <toolbarbutton id="connections-settings-button" type="menu-button"
             class="toolbarbutton-1 chromeclass-toolbar-additional connections-settings"
             label="&connections.settings.title;" tooltiptext="&connections.settings.title;"
-            oncommand="ConnectionsToolbar.preferences.configure(event, window);" />
-
+            oncommand="ConnectionsToolbar.preferences.configure(event, window);" >
+            <menupopup context="">
+                <menuitem id="reload-recommendations-setting-menu" label="&connections.toolbar.reload;"
+                    class="menuitem-iconic connections-reload"
+                    accesskey="&connections.toolbar.reload.accesskey;"
+                    oncommand="ConnectionsToolbar.scheduler.fullRefresh();
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+                <menuitem id="configure-connections-setting-menu" label="&connections.toolbar.configure;"
+                    class="menuitem-iconic connections-settings"
+                    accesskey="&connections.toolbar.configure.accesskey;"
+                    oncommand="ConnectionsToolbar.preferences.configure(event, window);
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+                <menuitem id="configure-connections-setting-menu" label="&connections.toolbar.buttons.restore;"
+                    class="menuitem-iconic"
+                    accesskey="&connections.toolbar.buttons.restore.accesskey;"
+                    oncommand="ConnectionsToolbar.browserOverlay.restoreButtons();
+                            ConnectionsToolbar.scheduler.fullRefresh();
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+                <menuitem id="toggle-logging-setting-menu"
+                    label="&connections.toolbar.enableLogging;" class="menuitem-iconic connections-icon-Text"
+                    accesskey="&connections.toolbar.enableLogging.accesskey;"
+                    oncommand="ConnectionsToolbar.preferences.toggleLogging(event);
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+                <menuitem id="connections-help-setting-menu" label="&connections.toolbar.help;"
+                    class="menuitem-iconic connections-help" accesskey="&connections.toolbar.help.accesskey;"
+                    oncommand="ConnectionsToolbar.browserOverlay.goHelp();
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+                <menuitem id="about-setting-menu"
+                    label="&connections.about;" class="menuitem-iconic"
+                    accesskey="&connections.about.accesskey;"
+                    oncommand="ConnectionsToolbar.browserOverlay.showAbout();
+                            ConnectionsToolbar.browserOverlay.doNothing(event);" />
+            </menupopup>
+        </toolbarbutton>
         <toolbarbutton id="connections-reload-button"
             class="toolbarbutton-1 chromeclass-toolbar-additional connections-reload"
             label="&connections.toolbar.reload;" tooltiptext="&connections.toolbar.reload;"
             oncommand="ConnectionsToolbar.scheduler.fullRefresh();" />
+        <!-- <toolbarbutton id="connections-cloud"
+            class="toolbarbutton-1 chromeclass-toolbar-additional connections-all-list-item"
+            label="IBM Connections Cloud" tooltiptext="IBM Connections Cloud"
+            oncommand="ConnectionsToolbar.browserOverlay.gotoURL('chrome://connections-toolbar/content/cloud/index.html', event, 'tab');" /> -->
     </toolbarpalette>
 
     <menupopup id="menu_ToolsPopup">
@@ -545,7 +533,7 @@
                 <menuitem label="Create item in a new tab" id="createItemTab"/>
             </menupopup>
             <menupopup id="menulistContext" onpopupshowing="ConnectionsToolbar.browserOverlay.showHideMenuItems(document.popupNode, event)">
-                <menuitem label="&connections.menu.open;" id="openListItem" default="true" accesskey="&connections.menu.open.accesskey;"/>
+                <menuitem label="&connections.menu.open;" id="openListItem" accesskey="&connections.menu.open.accesskey;"/>
                 <menuitem label="&connections.menu.open.tab;" id="openListItemTab" accesskey="&connections.menu.open.tab.accesskey;"/>
                 <menuitem label="&connections.menu.copy.url;" id="copyUrl" accesskey="&connections.menu.copy.url.accesskey;"/>
                 <menuseparator id="menulistContextSeparator" />

@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -41,8 +41,11 @@ ConnectionsToolbar.constants = {
         "BOOKMARKLET" : "bookmarklet"
     },
     SEARCH : "search",
-    RECOMMENDATIONS : "recommendations",
-    CONTENT : "content",
+    DATA_TYPE : {
+        RECOMMENDATIONS : "recommend",
+        CONTENT : "my",
+        FOLLOWING : "follow"
+    },
     
     COMPONENT : "component",
     DOWNLOAD : "download_link",

@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -35,8 +35,8 @@ ConnectionsToolbar.observer = {
                     return;
                 }
 
-                searchURL = Application.prefs
-                        .get("extensions.connections-toolbar.search.url").value.split("/search");
+                searchURL = ConnectionsToolbar.browserOverlay.prefService
+                        .getCharPref("extensions.connections-toolbar.search.url").split("/search");
                 if(!aSubject.URI.spec.match(searchURL[0])) {
                     ConnectionsToolbar.queue.removeNext();
                     ConnectionsToolbar.observer.unregister();
@@ -51,9 +51,8 @@ ConnectionsToolbar.observer = {
                 } else {
                     ConnectionsToolbar.queue.removeNext();
                 }
-            } catch (err) {
-                ConnectionsToolbar.logger.log(ConnectionsToolbar.constants.LOGGER.ERROR,
-                        err);
+            } catch (e) {
+                ConnectionsToolbar.logger.error(e);
                 ConnectionsToolbar.queue.removeNext();
                 ConnectionsToolbar.observer.unregister();
                 return;

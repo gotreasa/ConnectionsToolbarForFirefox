@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- * © Copyright IBM Corp. 2011, 2013
+ * © Copyright IBM Corp. 2011, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -28,7 +28,7 @@
     ondialogaccept="return false;"
     buttons="extra1,extra2" buttonlabelextra1="&connections.dialog.close;"
     defaultButton="extra1"
-    ondialogextra1="ConnectionsPreferences.preferenceSettings.validateOnClose();ConnectionsPreferences.preferenceSettings.submit();"
+    ondialogextra1="ConnectionsPreferences.preferenceSettings.validateOnClose();"
     buttonlabelextra2="&connections.toolbar.help;" ondialogextra2="ConnectionsToolbar.browserOverlay.goHelp();">
 
     <script type="application/x-javascript"
@@ -42,8 +42,6 @@
                 name="extensions.connections-toolbar.search.url" type="string" />
             <preference instantApply="true" id="hot-url-pref"
                 name="extensions.connections-toolbar.hot.url" type="string" />
-            <preference instantApply="true" id="blogs-homepage-pref"
-                name="extensions.connections-toolbar.blogs.homepage" type="string" />
         </preferences>
 
         <separator />
@@ -100,15 +98,7 @@
                 </rows>
             </grid>
         </groupbox>
-        <groupbox>
-        <caption label="&connections.dialog.blogs;"/>
-            <hbox align="center">
-                <label control="blogs-hamepage"
-                    value="&connections.dialog.blogs.homepage.handle;" />
-                <textbox id="blogs-hamepage" preference="blogs-homepage-pref"/>
-            </hbox>
-        </groupbox>
-        <separator height="90px" />
+        <separator height="110px" />
     </prefpane>
 
     <prefpane id="component-settings-pane"
@@ -138,9 +128,24 @@
                 type="int" />
 
             <preference instantApply="true"
-                id="allConnections-recommendations-count-pref"
-                name="extensions.connections-toolbar.recommendations.allConnections.count"
+                id="activities-following-count-pref" name="extensions.connections-toolbar.following.activities.count"
                 type="int" />
+            <preference instantApply="true"
+                id="blogs-following-count-pref" name="extensions.connections-toolbar.following.blogs.count"
+                type="int" />
+            <preference instantApply="true"
+                id="communities-following-count-pref" name="extensions.connections-toolbar.following.communities.count"
+                type="int" />
+            <preference instantApply="true"
+                id="files-following-count-pref" name="extensions.connections-toolbar.following.files.count"
+                type="int" />
+            <preference instantApply="true"
+                id="forums-following-count-pref" name="extensions.connections-toolbar.following.forums.count"
+                type="int" />
+            <preference instantApply="true"
+                id="wikis-following-count-pref" name="extensions.connections-toolbar.following.wikis.count"
+                type="int" />
+
             <preference instantApply="true"
                 id="activities-recommendations-count-pref"
                 name="extensions.connections-toolbar.recommendations.activities.count"
@@ -166,6 +171,10 @@
             <preference instantApply="true"
                 id="wikis-recommendations-count-pref" name="extensions.connections-toolbar.recommendations.wikis.count"
                 type="int" />
+
+            <preference instantApply="true"
+                id="use-tabs-pref" name="extensions.connections-toolbar.use.tabs.enable"
+                type="bool" />
         </preferences>
 
         <separator />
@@ -187,54 +196,48 @@
                         <separator />
                         <hbox pack="center"
                             class="connections-component-config-header">
-                            <label control="allConnections-count"
+                            <label
                                 value="&connections.content.label;" />
                         </hbox>
                         <separator />
                         <hbox pack="center"
                             class="connections-component-config-header">
-                            <image class="connections-component-config-image"
+                            <label
+                                value="&connections.following.label;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center"
+                            class="connections-component-config-header">
+                            <!-- <image class="connections-component-config-image"
                                 field="image"
-                                src="chrome://connections-toolbar/skin/images/28-star.png" />
-                            <label control="allConnections-count"
+                                src="chrome://connections-toolbar/skin/images/28-star.png" /> -->
+                            <label
                                 value="&connections.recommendations.label;" />
                         </hbox>
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconConnections16.png" />
-                            <label control="allConnections-count"
-                                value="&connections.allConnections.title;" />
-                        </hbox>
-                        <separator />
-                        <separator />
-                        <separator />
-                        <hbox pack="center" width="30">
-                            <menulist
-                                preference="allConnections-recommendations-count-pref">
-                                <menupopup>
-                                    <menuitem label="0" value="0" />
-                                    <menuitem label="5" value="5" />
-                                    <menuitem label="10" value="10" />
-                                    <menuitem label="15" value="15" />
-                                    <menuitem label="20" value="20" />
-                                </menupopup>
-                            </menulist>
-                        </hbox>
-                    </row>
-                    <row align="center">
-                        <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconCommunities16.png" />
+                            <image class="connections-component-config-image connections-communities"
+                                field="image" />
                             <label control="communities-count"
                                 value="&connections.communities.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="communities-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="communities-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -261,15 +264,27 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconActivities16.png" />
+                            <image class="connections-component-config-image connections-activities"
+                                field="image" />
                             <label control="activities-count"
                                 value="&connections.activities.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="activities-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="activities-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -296,15 +311,27 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconBlogs16.png" />
+                            <image class="connections-component-config-image connections-blogs"
+                                field="image" />
                             <label control="blogs-count"
                                 value="&connections.blogs.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="blogs-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="blogs-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -330,9 +357,8 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconBookmarks16.png" />
+                            <image class="connections-component-config-image connections-dogear"
+                                field="image" />
                             <label control="dogear-count"
                                 value="&connections.dogear.title;" />
                         </hbox>
@@ -351,6 +377,11 @@
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
+                            <label control="dogear-count"
+                                    value="&connections.not.applicable;" />
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
                             <menulist preference="dogear-recommendations-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
@@ -364,15 +395,27 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconFiles16.png" />
+                            <image class="connections-component-config-image connections-files"
+                                field="image" />
                             <label control="files-count"
                                 value="&connections.files.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="files-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="files-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -398,15 +441,27 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconForums16.png" />
+                            <image class="connections-component-config-image connections-forums"
+                                field="image" />
                             <label control="forums-count"
                                 value="&connections.forums.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="forums-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="forums-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -432,15 +487,27 @@
                     </row>
                     <row align="center">
                         <hbox class="connections-component-config-row">
-                            <image class="connections-component-config-image"
-                                field="image"
-                                src="chrome://connections-toolbar/skin/images/iconWikis16.png" />
+                            <image class="connections-component-config-image connections-wikis"
+                                field="image" />
                             <label control="wikis-count"
                                 value="&connections.wikis.title;" />
                         </hbox>
                         <separator />
                         <hbox pack="center" width="30">
                             <menulist preference="wikis-content-count-pref">
+                                <menupopup>
+                                    <menuitem label="0" value="0" />
+                                    <menuitem label="10" value="10" />
+                                    <menuitem label="20" value="20" />
+                                    <menuitem label="30" value="30" />
+                                    <menuitem label="40" value="40" />
+                                    <menuitem label="50" value="50" />
+                                </menupopup>
+                            </menulist>
+                        </hbox>
+                        <separator />
+                        <hbox pack="center" width="30">
+                            <menulist preference="wikis-following-count-pref">
                                 <menupopup>
                                     <menuitem label="0" value="0" />
                                     <menuitem label="10" value="10" />
@@ -467,6 +534,16 @@
                 </rows>
             </grid>
         </groupbox>
+        <separator />
+            <grid>
+                <rows>
+                    <row>
+                        <checkbox id="use-tabs" preference="use-tabs-pref" />
+                        <label control="use-tabs"
+                            value="&connections.dialog.use.tabs;" />
+                    </row>
+                </rows>
+            </grid>
         <separator />
     </prefpane>
 
