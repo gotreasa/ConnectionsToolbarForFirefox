@@ -29,48 +29,47 @@ ConnectionsToolbar.componentService = {
         ConnectionsToolbar.componentService.ready = false;
         ConnectionsToolbar.componentService.componentContentCount = null;
 
-        if (ConnectionsToolbar.componentService.componentContentContexts == null) {
-            ConnectionsToolbar.componentService.componentContentContexts = new Array();
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT] = new Array();
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/service/atom/communities/my?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/service/atom2/activities?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/home/api/blogs?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.DOGEAR] = "/atom/mybookmarks?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/atom/topics/my?ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/basic/api/myuserlibrary/feed?pageSize=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/form/api/mywikis/feed?pageSize=";
+        ConnectionsToolbar.componentService.componentContentContexts = new Array();
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT] = new Array();
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/service/atom/communities/my?ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/service/atom2/activities?ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/home/api/blogs?ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.DOGEAR] = "/atom/mybookmarks?ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/atom/topics/my?ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/basic/api/myuserlibrary/feed?pageSize=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.CONTENT][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/form/api/mywikis/feed?pageSize=";
 
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING] = new Array();
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/follow/atom/resources?source=communities&type=community&ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/follow/atom/resources?source=activities&type=activity&ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/follow/atom/resources?source=blogs&type=blog&ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/follow/atom/resources?source=forums&type=forum_topic&ps=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/follow/atom/resources?source=files&type=file&pageSize=";
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/follow/atom/resources?source=wikis&type=wiki&pageSize=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING] = new Array();
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.COMMUNITIES] = "/follow/atom/resources?source=communities&type=community&ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.ACTIVITIES] = "/follow/atom/resources?source=activities&type=activity&ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.BLOGS] = "/follow/atom/resources?source=blogs&type=blog&ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FORUMS] = "/follow/atom/resources?source=forums&type=forum_topic&ps=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.FILES] = "/follow/atom/resources?source=files&type=file&pageSize=";
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.FOLLOWING][ConnectionsToolbar.constants.COMPONENTS.WIKIS] = "/follow/atom/resources?source=wikis&type=wiki&pageSize=";
 
-            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS] = new Array();
-            var searchURL = ConnectionsToolbar.componentService.getComponentURL("search");
+        ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS] = new Array();
+        var searchURL = ConnectionsToolbar.browserOverlay.prefService
+        		.getCharPref("extensions.connections-toolbar.search.url");
 
-            var recommendUrl = searchURL + "/atom/social/recommend";
-            var defaultParams = "diversityboost=1.0f&dateboost=1.0f&randomize=true&pageSize=";
+        var recommendUrl = searchURL + "/atom/social/recommend";
+        var defaultParams = "diversityboost=1.0f&dateboost=1.0f&randomize=true&pageSize=";
 
-            for (var name in ConnectionsToolbar.constants.COMPONENTS) {
-                var component = ConnectionsToolbar.constants.COMPONENTS[name];
+        for (var name in ConnectionsToolbar.constants.COMPONENTS) {
+            var component = ConnectionsToolbar.constants.COMPONENTS[name];
 
-                if (component==="communities"){
-                        source = new Array("Source/communities/entry");
-                } else {
-                        source = new Array("Source/" + component);
-                }
-
-                var constraint = {type: "category", values: source};
-                ConnectionsToolbar.logger.info("The component is " + JSON.stringify(constraint));
-                ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS][component] = recommendUrl
-                        + "?constraint="
-                        + JSON.stringify(constraint)
-                        + "&"
-                        + defaultParams;
+            if (component==="communities"){
+                    source = new Array("Source/communities/entry");
+            } else {
+                    source = new Array("Source/" + component);
             }
+
+            var constraint = {type: "category", values: source};
+            ConnectionsToolbar.logger.info("The component is " + JSON.stringify(constraint));
+            ConnectionsToolbar.componentService.componentContentContexts[ConnectionsToolbar.constants.DATA_TYPE.RECOMMENDATIONS][component] = recommendUrl
+                    + "?constraint="
+                    + JSON.stringify(constraint)
+                    + "&"
+                    + defaultParams;
         }
 
         ConnectionsToolbar.preferences.refreshPreferences();
