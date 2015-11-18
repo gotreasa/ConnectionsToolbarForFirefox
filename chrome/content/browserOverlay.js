@@ -134,35 +134,40 @@ ConnectionsToolbar.browserOverlay = {
     },
 
     search : function(aEvent) {
-        var done = false;
-        var cleared = false;
-        var callingFunction = null;
-        try {
-            callingFunction = arguments.callee.caller;
-            done = (callingFunction == null);
-        } catch (e) {
-            ConnectionsToolbar.logger.error(e);
-            done = true;
-        }
-        while (!done) {
-            if (callingFunction.name == "_clearSearch") {
-                cleared = true;
-                done = true;
-            } else {
-                try {
-                    callingFunction = callingFunction.caller;
-                    done = (callingFunction.name == null);
-                } catch (e) {
-                    ConnectionsToolbar.logger.error(e);
-                    done = true;
-                }
-            }
-        }
-        if (!cleared) {
+    	
+    	/**
+    	 * This block of code doesn't appear to be contributing to the functionality of the toolbar
+    	 * Going to leave this commented out until I identify a problem with having it commented out
+    	 */
+//        var done = false;
+//        var cleared = false;
+//        var callingFunction = null;
+//        try {
+//            callingFunction = arguments.callee.caller;
+//            done = (callingFunction == null);
+//        } catch (e) {
+//            ConnectionsToolbar.logger.error(e);
+//            done = true;
+//        }
+//        while (!done) {
+//            if (callingFunction.name == "_clearSearch") {
+//                cleared = true;
+//                done = true;
+//            } else {
+//                try {
+//                    callingFunction = callingFunction.caller;
+//                    done = (callingFunction.name == null);
+//                } catch (e) {
+//                    ConnectionsToolbar.logger.error(e);
+//                    done = true;
+//                }
+//            }
+//        }
+//        if (!cleared) {
             var searchURL = ConnectionsToolbar.componentService
                     .getComponentURL("search");
             if (searchURL != "") {
-                var target = ConnectionsToolbar.browserOverlay.prefService.getBoolPref("extensions.connections-toolbar.use.tabs.enable") ? "tab" : null;
+                var target = ConnectionsToolbar.browserOverlay.prefService.getBoolPref("extensions.connections-toolbar.use.tabs.enable") ? "tab" : "current";
                 var scope = "";
                 var component = ConnectionsToolbar.browserOverlay.prefService.getCharPref("extensions.connections-toolbar.search");
                 var searchTerm = encodeURIComponent(document
@@ -181,7 +186,7 @@ ConnectionsToolbar.browserOverlay = {
                             + "&q=" + searchTerm;
                 }
                 openUILinkIn(searchRequest, target);
-            }
+//            }
         }
     },
 

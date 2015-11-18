@@ -27,9 +27,9 @@
         em:optionsURL="chrome://connections-toolbar/content/preferencesWindow.xul"
         em:iconURL="chrome://connections-toolbar/skin/images/55-network.png">
         <em:targetApplication RDF:resource="rdf:#$8hhKO1" />
-        <em:developer>Gearoid O Treasaigh</em:developer>
+        <em:developer>Gearóid Ó Treasaigh</em:developer>
         <em:translator>Naoyuki Furuya (ja-JP)</em:translator>
-        <em:contributor>Ciaran O hUallachain</em:contributor>
+        <em:contributor>Ciarán Ó hUallacháin</em:contributor>
         <em:contributor>Paul Magrath</em:contributor>
     </RDF:Description>
     <RDF:Description RDF:about="rdf:#$8hhKO1"
